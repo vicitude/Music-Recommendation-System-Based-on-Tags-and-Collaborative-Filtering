@@ -1,0 +1,108 @@
+{
+  "spec": "SPEC-MUSIC-001",
+  "router": "NATIVE_HASH",
+  "pages": [
+    {
+      "path": "/login",
+      "component": "frontend/src/pages/LoginPage.vue",
+      "auth": "PUBLIC",
+      "operations": [
+        "getCsrf",
+        "login"
+      ]
+    },
+    {
+      "path": "/register",
+      "component": "frontend/src/pages/RegisterPage.vue",
+      "auth": "PUBLIC",
+      "operations": [
+        "getCsrf",
+        "register"
+      ]
+    },
+    {
+      "path": "/onboarding",
+      "component": "frontend/src/pages/OnboardingPage.vue",
+      "auth": "SESSION",
+      "operations": [
+        "getInterests",
+        "listTags",
+        "setInterests"
+      ]
+    },
+    {
+      "path": "/discover",
+      "component": "frontend/src/pages/DiscoverPage.vue",
+      "auth": "PUBLIC",
+      "operations": [
+        "listTags",
+        "listSongs"
+      ]
+    },
+    {
+      "path": "/songs/:id",
+      "component": "frontend/src/pages/SongPage.vue",
+      "auth": "PUBLIC",
+      "operations": [
+        "getSong",
+        "streamSong",
+        "addFavorite",
+        "removeFavorite"
+      ]
+    },
+    {
+      "path": "/favorites",
+      "component": "frontend/src/pages/FavoritesPage.vue",
+      "auth": "SESSION",
+      "operations": [
+        "listFavorites",
+        "removeFavorite"
+      ]
+    },
+    {
+      "path": "/playlists",
+      "component": "frontend/src/pages/PlaylistsPage.vue",
+      "auth": "SESSION",
+      "operations": [
+        "listPlaylists",
+        "createPlaylist"
+      ]
+    },
+    {
+      "path": "/playlists/:id",
+      "component": "frontend/src/pages/PlaylistPage.vue",
+      "auth": "SESSION",
+      "operations": [
+        "getPlaylist",
+        "renamePlaylist",
+        "deletePlaylist",
+        "addPlaylistSong",
+        "removePlaylistSong"
+      ]
+    },
+    {
+      "path": "/daily",
+      "component": "frontend/src/pages/DailyPage.vue",
+      "auth": "SESSION",
+      "operations": [
+        "getDaily",
+        "refreshDaily"
+      ]
+    }
+  ],
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "typecheck": "vue-tsc --noEmit",
+    "build": "vue-tsc --noEmit && vite build"
+  },
+  "server": {
+    "development_host": "127.0.0.1",
+    "development_port": 5173,
+    "api_proxy": "http://127.0.0.1:8000",
+    "same_origin_paths": [
+      "/api",
+      "/admin",
+      "/static"
+    ]
+  }
+}

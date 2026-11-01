@@ -1,0 +1,1278 @@
+{
+  "schema_version": 1,
+  "prepared_on": "2026-10-30",
+  "source_directory": "D:\\AAA素材库\\song",
+  "method": "WINDOWS_SHELL_PROPERTY_SYSTEM",
+  "tag_method": "ASSISTED_CANDIDATES_NOT_AUDIO_ANALYSIS",
+  "duplicates": [],
+  "items": [
+    {
+      "filename": "A-Lin-天若有情.mp3",
+      "sha256": "1e2071963b447cb726e28fcd7b9f2b4aa4ce6ce1f6486dc87ae466a260dde9a0",
+      "bytes": 10294408,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "天若有情",
+      "artist": "A-Lin",
+      "album": "天若有情",
+      "duration_ms": 257332,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "流行",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "MOOD",
+          "name": "伤感",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "SCENE",
+          "name": "夜晚",
+          "confidence": "LOW",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "Capper&罗言RollFlash-雪 Distance.mp3",
+      "sha256": "632a72efadb193dd90ac697407b9f82320654f0cb7bb47d6a04bb5485450843c",
+      "bytes": 6643595,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "雪 Distance",
+      "artist": "Capper&罗言RollFlash",
+      "album": "Uniconfication (Explicit)",
+      "duration_ms": 166060,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "说唱",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "SCENE",
+          "name": "通勤",
+          "confidence": "LOW",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "DJ Dark&Mentol-Mood(Radio Edit).mp3",
+      "sha256": "8ef416ff6bfad2d81837262a07f8e688fdb1f812b078e238169c720ef4034789",
+      "bytes": 7323773,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "Mood(Radio Edit)",
+      "artist": "DJ Dark&Mentol",
+      "album": "Mood",
+      "duration_ms": 183066,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "电子",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "MOOD",
+          "name": "动感",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "SCENE",
+          "name": "运动",
+          "confidence": "LOW",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "G.E.M.邓紫棋-句号.mp3",
+      "sha256": "000d33838aec08521cc3abcba09f383c9bee179d68f7fab02ce283e7b04f8a69",
+      "bytes": 9429246,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "句号",
+      "artist": "G.E.M.邓紫棋",
+      "album": "摩天动物园",
+      "duration_ms": 235702,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "流行",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "MOOD",
+          "name": "释然",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "SCENE",
+          "name": "通勤",
+          "confidence": "LOW",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "HITA-赤伶.mp3",
+      "sha256": "07339384a7c58c45b8f04fe33646f8e210f3c38194442c87f102638f98137001",
+      "bytes": 10659686,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "赤伶",
+      "artist": "HITA",
+      "album": "赤伶",
+      "duration_ms": 266464,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "国风",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "MOOD",
+          "name": "悲壮",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "Kirsty刘瑾睿-若把你(Live).mp3",
+      "sha256": "10bd69e0c711d6a666e2476dc6e18f8ed9860e594976281640e758979c69e25d",
+      "bytes": 7650868,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "若把你(Live)",
+      "artist": "Kirsty刘瑾睿",
+      "album": "我的音乐你听吗 (第2期live)",
+      "duration_ms": 191242,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "流行",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "MOOD",
+          "name": "温柔",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "SCENE",
+          "name": "放松",
+          "confidence": "LOW",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "Lana Del Rey-Young And Beautiful.mp3",
+      "sha256": "0b81a2a458b40f0f98afaa797ece0bc250a2951dc6e6cee078aa517d5ad1f10c",
+      "bytes": 9445976,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "Young And Beautiful",
+      "artist": "Lana Del Rey",
+      "album": "Young And Beautiful",
+      "duration_ms": 236120,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "流行",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "MOOD",
+          "name": "忧郁",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "SCENE",
+          "name": "夜晚",
+          "confidence": "LOW",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "Madnap&Pauline Herr-Slow Down.mp3",
+      "sha256": "1fe7b76d125594e364f48c308301b10e835ee3d1620a8a8f77121a08e39023bd",
+      "bytes": 8134616,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "Slow Down",
+      "artist": "Madnap&Pauline Herr",
+      "album": "Slow Down",
+      "duration_ms": 203337,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "Max Elto-Shadow Of The Sun.mp3",
+      "sha256": "f05da517ce93201a6b44e9e13347c78275d19303b146781ea4730573fdecc89d",
+      "bytes": 5834793,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "Shadow Of The Sun",
+      "artist": "Max Elto",
+      "album": "Taped Rai",
+      "duration_ms": 145841,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "MDP-Fake Love (Orchestral Version).mp3",
+      "sha256": "cbadc1e1f32ddbd9b473f6c6e1b680ce3a642e8430d809777ef540d81e178bcd",
+      "bytes": 9692357,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "Fake Love (Orchestral Version)",
+      "artist": "MDP",
+      "album": "DD Ceremony",
+      "duration_ms": 242280,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "管弦乐",
+          "confidence": "LOW",
+          "basis": "文件名版本词：Orchestral，未声学验证",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "Narrow Skies-Season of Gold.mp3",
+      "sha256": "9dc7c9661bdc6a340035f97092e811df24c80b3709a9ab18518614a712673c31",
+      "bytes": 7317065,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "Season of Gold",
+      "artist": "Narrow Skies",
+      "album": "Season of Gold",
+      "duration_ms": 182898,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "RincolF-夜风无意作情歌（Cover：恋恋故人难）.mp3",
+      "sha256": "f8201099525d5aedaf4459127a94fa416b409db3c530c285c9d47184cf77cbe1",
+      "bytes": 13512707,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "夜风无意作情歌（Cover：恋恋故人难）",
+      "artist": "RincolF",
+      "album": "",
+      "duration_ms": 337789,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "UNKNOWN",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "Tanir & TyomcHa-Da Da Da(Remix by Mikis).mp3",
+      "sha256": "cef10e17357533006af99717d9249526625d4a6131871cf6ea743e5e576c0b74",
+      "bytes": 7327982,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "Da Da Da(Remix by Mikis)",
+      "artist": "Tanir & TyomcHa",
+      "album": "Da Da Da (Remix by Mikis)",
+      "duration_ms": 183170,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "混音版",
+          "confidence": "LOW",
+          "basis": "文件名版本词：Remix，未声学验证",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "Taylor Swift-Love Story.mp3",
+      "sha256": "aa6d1bab4f004fdb56f157eddb324c81cdc5288a4db115f0d327429593c95b7f",
+      "bytes": 9414628,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "Love Story",
+      "artist": "Taylor Swift",
+      "album": "Fearless (Platinum Edition)",
+      "duration_ms": 235337,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "乡村流行",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "MOOD",
+          "name": "浪漫",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "SCENE",
+          "name": "通勤",
+          "confidence": "LOW",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "True Hertz&王者荣耀-This World.mp3",
+      "sha256": "10003c00bae3c1bdb2d687dd47446db11d842b5510392ea40f5d5f0a0a1dd3c3",
+      "bytes": 7737570,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "This World",
+      "artist": "True Hertz&王者荣耀",
+      "album": "This World",
+      "duration_ms": 193410,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "Various Artists-Fatal Love(纯音乐).mp3",
+      "sha256": "d5278f3b0ae8e27b317d2540c9492f7e6f8dadd771cca837ca5c79da8d4a49eb",
+      "bytes": 4769020,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "Fatal Love(纯音乐)",
+      "artist": "Various Artists",
+      "album": "帅气男孩",
+      "duration_ms": 119196,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "纯音乐",
+          "confidence": "LOW",
+          "basis": "文件名版本词：纯音乐，未声学验证",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "阿禹ayy-耍把戏.mp3",
+      "sha256": "c240ab376599b182abe870bb1fc5b3f8e017d415fa850f521bd16a89f494ed0b",
+      "bytes": 8293432,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "耍把戏",
+      "artist": "阿禹ayy",
+      "album": "耍把戏",
+      "duration_ms": 207307,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "爱人错过伴奏.MP3",
+      "sha256": "ed26e8013978b0bf1b92b742dd5ccc548c69a77038f5be137ed93cd39e066afc",
+      "bytes": 1568650,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "爱人错过伴奏",
+      "artist": "",
+      "album": "",
+      "duration_ms": 98037,
+      "metadata_sources": {
+        "title": "FILENAME",
+        "artist": "UNKNOWN",
+        "album": "UNKNOWN",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [
+        "歌手缺失，不能从文件名确认"
+      ],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "伴奏",
+          "confidence": "LOW",
+          "basis": "文件名版本词：伴奏，未声学验证",
+          "needs_review": true
+        }
+      ],
+      "eligible": false
+    },
+    {
+      "filename": "菠萝赛东-如果.mp3",
+      "sha256": "601809ab76ca95e608a89653ad3e3de5efc280a6c60e4e16b63160681e923a98",
+      "bytes": 3703381,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "如果",
+      "artist": "菠萝赛东",
+      "album": "",
+      "duration_ms": 231392,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "UNKNOWN",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "草东没有派对-山海.mp3",
+      "sha256": "552001df384b366760042050d537861a7c92f62e2ad8e843a3254c2fb5dede95",
+      "bytes": 10045748,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "山海",
+      "artist": "草东没有派对",
+      "album": "丑奴儿 (Explicit)",
+      "duration_ms": 251115,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "摇滚",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "MOOD",
+          "name": "激昂",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "陈粒-虚拟.mp3",
+      "sha256": "5b3ef48ccd274eacca08bae9e23da0285b0d08bba07b2db7681926e3cd9921a9",
+      "bytes": 9628805,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "虚拟",
+      "artist": "陈粒",
+      "album": "小梦大半",
+      "duration_ms": 240692,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "流行",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "程今-爱是无畏的冒险.mp3",
+      "sha256": "5556aa92566d5e13e2cd8a2a51385ac7f8cb2e093aadb55a741eb7277fc74c9c",
+      "bytes": 7099124,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "爱是无畏的冒险",
+      "artist": "程今",
+      "album": "爱是无畏的冒险",
+      "duration_ms": 177449,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "邓寓君(等什么君)&FOX胡天渝-踏雪.mp3",
+      "sha256": "06efbfc5bb80597564a06586182d6e06bace7041870064eee0f44300dc046cdb",
+      "bytes": 8404211,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "踏雪",
+      "artist": "邓寓君(等什么君)&FOX胡天渝",
+      "album": "予·君",
+      "duration_ms": 210076,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "凤凰传奇-奢香夫人.mp3",
+      "sha256": "712ce0b13adaca44c8f13dcbb777cf78b9f9d05ac48619938a9d4be6aad6835f",
+      "bytes": 10399950,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "奢香夫人",
+      "artist": "凤凰传奇",
+      "album": "最炫民族风",
+      "duration_ms": 259970,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "民族流行",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "MOOD",
+          "name": "动感",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "SCENE",
+          "name": "运动",
+          "confidence": "LOW",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "告五人-爱人错过.mp3",
+      "sha256": "8f97a9c72578e27787b08694dd501700f9db93ebebb58846577c504a01484fca",
+      "bytes": 11686234,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "爱人错过",
+      "artist": "告五人",
+      "album": "我肯定在几百年前就说过爱你",
+      "duration_ms": 292127,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "流行摇滚",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "SCENE",
+          "name": "通勤",
+          "confidence": "LOW",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "告五人-唯一.mp3",
+      "sha256": "570a0d17bceba1acf71c8548e70a67bfe5654dd2ebfbb35fb3290d9ff204d0d7",
+      "bytes": 10834628,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "唯一",
+      "artist": "告五人",
+      "album": "运气来得若有似无",
+      "duration_ms": 270837,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "流行",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "MOOD",
+          "name": "伤感",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "SCENE",
+          "name": "夜晚",
+          "confidence": "LOW",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "葛东琪-悬溺(伴奏).mp3",
+      "sha256": "85c179b03a73de0adadedfcc6cceb354f09d39c297f14e7068f653ce39fbb828",
+      "bytes": 7886971,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "悬溺(伴奏)",
+      "artist": "葛东琪",
+      "album": "第二街区",
+      "duration_ms": 197146,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "流行",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "STYLE",
+          "name": "伴奏",
+          "confidence": "LOW",
+          "basis": "文件名版本词：伴奏，未声学验证",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "葛东琪-悬溺.mp3",
+      "sha256": "a97f28521a83721e7a6c794c25a2719221c0bfe8edfb30241fa5bea202debaf6",
+      "bytes": 7886963,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "悬溺",
+      "artist": "葛东琪",
+      "album": "第二街区",
+      "duration_ms": 197146,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "流行",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "MOOD",
+          "name": "忧郁",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "SCENE",
+          "name": "夜晚",
+          "confidence": "LOW",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "郭顶-凄美地.mp3",
+      "sha256": "0b158313edb30923c033e28c8611bd39dbfbc41fe7dfc21ceebc7c9e8916f200",
+      "bytes": 10030046,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "凄美地",
+      "artist": "郭顶",
+      "album": "凄美地",
+      "duration_ms": 250723,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "流行摇滚",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "MOOD",
+          "name": "忧郁",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "SCENE",
+          "name": "夜晚",
+          "confidence": "LOW",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "精灵进化小曲.mp3",
+      "sha256": "4a52b3ee3ac0ac2dda9ea2ab861970c015c1d813961101dd4413c78b78706c4d",
+      "bytes": 913238,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "精灵进化小曲",
+      "artist": "",
+      "album": "",
+      "duration_ms": 58527,
+      "metadata_sources": {
+        "title": "FILENAME",
+        "artist": "UNKNOWN",
+        "album": "UNKNOWN",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [
+        "歌手缺失，不能从文件名确认"
+      ],
+      "tag_suggestions": [],
+      "eligible": false
+    },
+    {
+      "filename": "精卫.MP3",
+      "sha256": "eca50e98162882befe742f5467dc5a08fe1525a7d30c595823e733dac587ca4f",
+      "bytes": 1403139,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "精卫",
+      "artist": "",
+      "album": "",
+      "duration_ms": 87693,
+      "metadata_sources": {
+        "title": "FILENAME",
+        "artist": "UNKNOWN",
+        "album": "UNKNOWN",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [
+        "歌手缺失，不能从文件名确认"
+      ],
+      "tag_suggestions": [],
+      "eligible": false
+    },
+    {
+      "filename": "九三-我好像在哪见过你 (cover： 薛 之谦)(Live).mp3",
+      "sha256": "d842b9c845bfcb5582845fc411824791d30431b57f31a1b40c3f5217767f4c7f",
+      "bytes": 4593496,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "我好像在哪见过你 (cover: 薛 之谦)(Live)",
+      "artist": "九三",
+      "album": "九三的翻唱",
+      "duration_ms": 114808,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "李尧音-深海回响.mp3",
+      "sha256": "31f0097bcd092149fb1aeb9e028803d5e14774776edbbe752b2c2b2d966e18bf",
+      "bytes": 7027016,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "深海回响",
+      "artist": "李尧音",
+      "album": "深海回响",
+      "duration_ms": 175647,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "李玉刚&国风新语-赤伶(2021交响乐版).mp3",
+      "sha256": "441bab4fabad49fbc4e6524b17d27273e7b0c6ce4124ec24a4ec825f5d75a75d",
+      "bytes": 11616251,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "赤伶(2021交响乐版)",
+      "artist": "李玉刚&国风新语",
+      "album": "赤伶 (2021交响乐版)",
+      "duration_ms": 290377,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "国风",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "STYLE",
+          "name": "管弦乐",
+          "confidence": "LOW",
+          "basis": "文件名版本词：交响乐版，未声学验证",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "苏星婕-妈妈的话(女版).mp3",
+      "sha256": "bf5a56a2af01fd6529acb7a09e6f5f1c14666ef0ec6a4bc25cc4afe191555527",
+      "bytes": 6822234,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "妈妈的话(女版)",
+      "artist": "苏星婕",
+      "album": "妈妈的话 (女版)",
+      "duration_ms": 170527,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "王靖雯-玫瑰少年.mp3",
+      "sha256": "2cdb46046fa3ef1168d919649cebf5b23092ec8de831c5e2f25e9a1c3f497d14",
+      "bytes": 9319522,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "玫瑰少年",
+      "artist": "王靖雯",
+      "album": "玫瑰少年",
+      "duration_ms": 232959,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "王天戈-心许百年.mp3",
+      "sha256": "feef9bfe18689e3c66ea58a295bd7a0de62e09c3e38c03db0f53974f7178dd61",
+      "bytes": 8449122,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "心许百年",
+      "artist": "王天戈",
+      "album": "心许百年",
+      "duration_ms": 211199,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "萧亚轩-遗失的心跳.mp3",
+      "sha256": "820a24e1f1d7a5e2c38307800f13aa4d05c07be69436749a38dd785af39afa5d",
+      "bytes": 8647652,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "遗失的心跳",
+      "artist": "萧亚轩",
+      "album": "我爱我",
+      "duration_ms": 216163,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "流行",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "MOOD",
+          "name": "伤感",
+          "confidence": "MEDIUM",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        },
+        {
+          "kind": "SCENE",
+          "name": "通勤",
+          "confidence": "LOW",
+          "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "尹昔眠-敢问将军.mp3",
+      "sha256": "f05f8f9002ac080dcbfb9e571f1f57ab76a3af7fe94175b56ae422a7922ad591",
+      "bytes": 8900518,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "敢问将军",
+      "artist": "尹昔眠",
+      "album": "敢问将军",
+      "duration_ms": 222484,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "雨爱dj.mp3",
+      "sha256": "481cb96f0aca522bacbf58f78d6b36228469eb038175384e8669ee962e6da55f",
+      "bytes": 3156007,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "雨爱dj",
+      "artist": "",
+      "album": "",
+      "duration_ms": 202294,
+      "metadata_sources": {
+        "title": "FILENAME",
+        "artist": "UNKNOWN",
+        "album": "UNKNOWN",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [
+        "歌手缺失，不能从文件名确认"
+      ],
+      "tag_suggestions": [],
+      "eligible": false
+    },
+    {
+      "filename": "赵希予-落日星空.mp3",
+      "sha256": "f165da98debe18badcec7f9022413c61404e0c06750e96cd9cc23e064fe37b3c",
+      "bytes": 8067263,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "落日星空",
+      "artist": "赵希予",
+      "album": "落日星空",
+      "duration_ms": 201653,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "指尖笑-不问ciaga(不问别离).mp3",
+      "sha256": "b3f6119c088c38d083a92194e3ee14922a67fefa650b9581b8298d0a7f33dbc3",
+      "bytes": 6531752,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "不问ciaga(不问别离)",
+      "artist": "指尖笑",
+      "album": "不问别离",
+      "duration_ms": 163265,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    },
+    {
+      "filename": "忠于你-Fake love(钢琴版).mp3",
+      "sha256": "11efbb4406c18e4ed11c4e263c0b04fcf4d32be3915109a10f40c50555a94634",
+      "bytes": 3352125,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "Fake love(钢琴版)",
+      "artist": "忠于你",
+      "album": "BonBon",
+      "duration_ms": 83774,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "WINDOWS_MEDIA_PROPERTY",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [
+        {
+          "kind": "STYLE",
+          "name": "钢琴",
+          "confidence": "LOW",
+          "basis": "文件名版本词：钢琴版，未声学验证",
+          "needs_review": true
+        }
+      ],
+      "eligible": true
+    },
+    {
+      "filename": "周深-兰亭序(Live).mp3",
+      "sha256": "d31f5428734da56199f5e162e1520cb6896ee73c04de211484cf7ba59b1de37a",
+      "bytes": 9960031,
+      "rights_status": "UNVERIFIED",
+      "draft_only": true,
+      "title": "兰亭序(Live)",
+      "artist": "周深",
+      "album": "",
+      "duration_ms": 248973,
+      "metadata_sources": {
+        "title": "WINDOWS_MEDIA_PROPERTY",
+        "artist": "WINDOWS_MEDIA_PROPERTY",
+        "album": "UNKNOWN",
+        "duration_ms": "WINDOWS_MEDIA_PROPERTY"
+      },
+      "metadata_issues": [],
+      "tag_suggestions": [],
+      "eligible": true
+    }
+  ]
+}

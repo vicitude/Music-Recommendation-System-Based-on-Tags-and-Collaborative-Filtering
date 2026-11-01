@@ -1,0 +1,35 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}{{ block.super }}{{ form.media }}{% endblock %}
+{% block bodyclass %}{{ block.super }} login music-login{% endblock %}
+{% block usertools %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content %}
+<div class="studio-login-layout">
+  <section class="studio-login-story" aria-labelledby="studio-story-title">
+    <p class="studio-kicker">A SPACE FOR GOOD MUSIC</p>
+    <h1 id="studio-story-title">好音乐，<br>从用心整理开始。</h1>
+    <p>让风格、情绪与场景找到合适的声音。<br>在这里，维护曲库，也守护每首作品的来源。</p>
+    <div class="studio-record" aria-hidden="true"><div class="studio-record-core">♪</div><span class="record-tag tag-mood">情绪 · 治愈</span><span class="record-tag tag-style">风格 · 民谣</span><span class="record-tag tag-scene">场景 · 专注</span></div>
+    <div class="studio-story-foot"><span>01 / 曲库与标签</span><span>02 / 核验与发布</span></div>
+  </section>
+  <section class="studio-login-form" aria-labelledby="studio-login-title">
+    <p class="studio-kicker">WELCOME BACK</p>
+    <h2 id="studio-login-title">登录内容管理台</h2>
+    <p class="studio-subtitle">使用你刚创建的网站管理员账号，<br>不是数据库账户。</p>
+    {% if form.errors %}<div class="errornote" role="alert">{% if form.non_field_errors %}{{ form.non_field_errors }}{% else %}请检查下面标出的输入内容。{% endif %}</div>{% endif %}
+    {% if user.is_authenticated %}<p class="errornote" role="alert">当前账号无权进入管理台，请使用具有管理权限的账号登录。</p>{% endif %}
+    <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+      <div class="form-row">{{ form.username.errors }}<label for="{{ form.username.id_for_label }}">管理员用户名</label>{{ form.username }}</div>
+      <div class="form-row">{{ form.password.errors }}<label for="{{ form.password.id_for_label }}">登录密码</label>{{ form.password }}</div>
+      <input type="hidden" name="next" value="{{ next }}">
+      <div class="submit-row"><input type="submit" value="进入工作台 →"></div>
+    </form>
+    <p class="studio-login-note">仅限授权管理员访问。请勿在公共设备上保存密码。</p>
+    <a class="studio-back-link" href="http://127.0.0.1:5173/#/discover">← 返回音乐前台</a>
+  </section>
+</div>
+{% endblock %}

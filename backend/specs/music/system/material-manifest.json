@@ -1,0 +1,56 @@
+{
+  "source_roots": {
+    "song": "D:/AAA素材库/song",
+    "midi": "D:/AAA素材库/midi"
+  },
+  "policy": {
+    "mode": "external-read-only",
+    "copied_into_project": false,
+    "license_status": "UNVERIFIED_USER_SUPPLIED",
+    "playback_allowed": false,
+    "research_allowed": false
+  },
+  "collections": {
+    "song": {
+      "count": 49,
+      "header_valid_count": 49,
+      "extensions": [
+        ".mp3",
+        ".flac",
+        ".m4a",
+        ".mp4"
+      ],
+      "sample_filenames": [
+        "A-Lin-天若有情.mp3",
+        "Alexandra Stan-ALL MY PEOPLE.flac",
+        "Capper&罗言RollFlash-雪 Distance.mp3",
+        "DJ Dark&Mentol-Mood(Radio Edit).mp3",
+        "G.E.M.邓紫棋-句号.mp3",
+        "HITA-赤伶.mp3",
+        "Kirsty刘瑾睿-若把你(Live).mp3",
+        "Lana Del Rey-Young And Beautiful.mp3",
+        "MDP-Fake Love (Orchestral Version).mp3",
+        "Madnap&Pauline Herr-Slow Down.mp3"
+      ]
+    },
+    "midi": {
+      "count": 88,
+      "header_valid_count": 88,
+      "extensions": [
+        ".mid"
+      ],
+      "sample_filenames": [
+        "1.mid",
+        "ARIA MATH in ROCO -8 MEMO.mid",
+        "Believer.mid",
+        "CU AGAIN.mid",
+        "Call of Silence.mid",
+        "See You Again（有缘再见）.mid",
+        "See you again.mid",
+        "Something Just Like This.mid",
+        "UNDERTALE in ROCO (1).mid",
+        "UNDERTALE in ROCO.mid"
+      ]
+    }
+  }
+}

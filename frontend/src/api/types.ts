@@ -1,0 +1,10 @@
+export type User = { id: number; username: string; onboarding_completed: boolean }
+export type Tag = { id: number; name: string; kind: 'STYLE' | 'MOOD' | 'SCENE' }
+export type Song = { id: number; title: string; artist: string; album: string; duration_ms: number; tags: Tag[]; playable: boolean; stream_url: string | null; attribution_text: string; source_url: string; license_name: string; license_url: string }
+export type SongPage = { count: number; page: number; page_size: number; results: Song[] }
+export type Playlist = { id: number; name: string; created_at: string }
+export type PlaylistDetail = Playlist & { songs: Song[] }
+export type Interests = { tag_ids: number[]; onboarding_completed: boolean }
+export type RecommendationItem = { song_id: number; rank: number; source: 'CONTENT' | 'CF' | 'HYBRID' | 'HOT'; score: number; explanation: string; evidence: { tag_ids: number[]; neighbor_count: number } }
+export type Daily = { day: string; revision: number; alpha_target: number; alpha_effective: number | null; next_refresh_at: string; items: RecommendationItem[]; empty_reason: 'NO_ELIGIBLE_SONGS' | 'FILTERED_OUT' | null }
+export type BehaviorEvent = { event_id: string; song_id: number; listening_session_id: string; kind: 'PLAY' | 'COMPLETE' | 'SKIP'; position_ms: number; listened_ms: number }

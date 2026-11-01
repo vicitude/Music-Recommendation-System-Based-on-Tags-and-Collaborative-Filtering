@@ -1,0 +1,420 @@
+{
+  "spec": "SPEC-MUSIC-001",
+  "status": "PARTIALLY_IMPLEMENTED",
+  "bindings": [
+    {
+      "operation_id": "getCsrf",
+      "method": "GET",
+      "path": "/api/v1/auth/csrf/",
+      "module": "backend/music/api/views.py",
+      "signature": "getCsrf(request: Request) -> Response",
+      "auth": "PUBLIC",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "register",
+      "method": "POST",
+      "path": "/api/v1/auth/register/",
+      "module": "backend/music/api/views.py",
+      "signature": "register(request: Request) -> Response",
+      "auth": "PUBLIC",
+      "csrf": true,
+      "request_schema": "Register",
+      "responses": [
+        "201",
+        "400",
+        "403",
+        "409",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "login",
+      "method": "POST",
+      "path": "/api/v1/auth/login/",
+      "module": "backend/music/api/views.py",
+      "signature": "login(request: Request) -> Response",
+      "auth": "PUBLIC",
+      "csrf": true,
+      "request_schema": "Login",
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "403",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "logout",
+      "method": "POST",
+      "path": "/api/v1/auth/logout/",
+      "module": "backend/music/api/views.py",
+      "signature": "logout(request: Request) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": null,
+      "responses": [
+        "204",
+        "400",
+        "401",
+        "403",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "getMe",
+      "method": "GET",
+      "path": "/api/v1/me/",
+      "module": "backend/music/api/views.py",
+      "signature": "getMe(request: Request) -> Response",
+      "auth": "SESSION",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "getInterests",
+      "method": "GET",
+      "path": "/api/v1/me/interests/",
+      "module": "backend/music/api/views.py",
+      "signature": "getInterests(request: Request) -> Response",
+      "auth": "SESSION",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "setInterests",
+      "method": "PUT",
+      "path": "/api/v1/me/interests/",
+      "module": "backend/music/api/views.py",
+      "signature": "setInterests(request: Request) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": "InterestRequest",
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "403",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "listTags",
+      "method": "GET",
+      "path": "/api/v1/tags/",
+      "module": "backend/music/api/views.py",
+      "signature": "listTags(request: Request) -> Response",
+      "auth": "PUBLIC",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "listSongs",
+      "method": "GET",
+      "path": "/api/v1/songs/",
+      "module": "backend/music/api/views.py",
+      "signature": "listSongs(request: Request) -> Response",
+      "auth": "PUBLIC",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "getSong",
+      "method": "GET",
+      "path": "/api/v1/songs/{id}/",
+      "module": "backend/music/api/views.py",
+      "signature": "getSong(request: Request, id: int) -> Response",
+      "auth": "PUBLIC",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "streamSong",
+      "method": "GET",
+      "path": "/api/v1/songs/{id}/stream/",
+      "module": "backend/music/api/views.py",
+      "signature": "streamSong(request: Request, id: int) -> HttpResponse",
+      "auth": "SESSION",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "206",
+        "400",
+        "401",
+        "403",
+        "404",
+        "416",
+        "500",
+        "503"
+      ]
+    },
+    {
+      "operation_id": "listFavorites",
+      "method": "GET",
+      "path": "/api/v1/favorites/",
+      "module": "backend/music/api/views.py",
+      "signature": "listFavorites(request: Request) -> Response",
+      "auth": "SESSION",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "addFavorite",
+      "method": "PUT",
+      "path": "/api/v1/favorites/{id}/",
+      "module": "backend/music/api/views.py",
+      "signature": "addFavorite(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": null,
+      "responses": [
+        "204",
+        "400",
+        "401",
+        "403",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "removeFavorite",
+      "method": "DELETE",
+      "path": "/api/v1/favorites/{id}/",
+      "module": "backend/music/api/views.py",
+      "signature": "removeFavorite(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": null,
+      "responses": [
+        "204",
+        "400",
+        "401",
+        "403",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "listPlaylists",
+      "method": "GET",
+      "path": "/api/v1/playlists/",
+      "module": "backend/music/api/views.py",
+      "signature": "listPlaylists(request: Request) -> Response",
+      "auth": "SESSION",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "createPlaylist",
+      "method": "POST",
+      "path": "/api/v1/playlists/",
+      "module": "backend/music/api/views.py",
+      "signature": "createPlaylist(request: Request) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": "PlaylistWrite",
+      "responses": [
+        "201",
+        "400",
+        "401",
+        "403",
+        "409",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "getPlaylist",
+      "method": "GET",
+      "path": "/api/v1/playlists/{id}/",
+      "module": "backend/music/api/views.py",
+      "signature": "getPlaylist(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "renamePlaylist",
+      "method": "PATCH",
+      "path": "/api/v1/playlists/{id}/",
+      "module": "backend/music/api/views.py",
+      "signature": "renamePlaylist(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": "PlaylistWrite",
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "403",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "deletePlaylist",
+      "method": "DELETE",
+      "path": "/api/v1/playlists/{id}/",
+      "module": "backend/music/api/views.py",
+      "signature": "deletePlaylist(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": null,
+      "responses": [
+        "204",
+        "400",
+        "401",
+        "403",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "addPlaylistSong",
+      "method": "PUT",
+      "path": "/api/v1/playlists/{id}/songs/{song_id}/",
+      "module": "backend/music/api/views.py",
+      "signature": "addPlaylistSong(request: Request, id: int, song_id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": null,
+      "responses": [
+        "204",
+        "400",
+        "401",
+        "403",
+        "404",
+        "409",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "removePlaylistSong",
+      "method": "DELETE",
+      "path": "/api/v1/playlists/{id}/songs/{song_id}/",
+      "module": "backend/music/api/views.py",
+      "signature": "removePlaylistSong(request: Request, id: int, song_id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": null,
+      "responses": [
+        "204",
+        "400",
+        "401",
+        "403",
+        "404",
+        "409",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "recordBehavior",
+      "method": "POST",
+      "path": "/api/v1/behaviors/",
+      "module": "backend/music/api/views.py",
+      "signature": "recordBehavior(request: Request) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": "BehaviorRequest",
+      "responses": [
+        "200",
+        "201",
+        "400",
+        "401",
+        "403",
+        "404",
+        "409",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "getDaily",
+      "method": "GET",
+      "path": "/api/v1/recommendations/daily/",
+      "module": "backend/music/api/views.py",
+      "signature": "getDaily(request: Request) -> Response",
+      "auth": "SESSION",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "refreshDaily",
+      "method": "POST",
+      "path": "/api/v1/recommendations/daily/refresh/",
+      "module": "backend/music/api/views.py",
+      "signature": "refreshDaily(request: Request) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "403",
+        "429",
+        "500"
+      ]
+    }
+  ]
+}

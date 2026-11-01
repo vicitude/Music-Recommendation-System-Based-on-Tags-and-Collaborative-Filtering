@@ -1,0 +1,638 @@
+{
+  "spec": "SPEC-MUSIC-001",
+  "django_version": "5.2.18",
+  "status": "DESIGN_ONLY",
+  "migration": "backend/music/migrations/0001_initial.py",
+  "dependencies": [
+    [
+      "auth",
+      "0012_alter_user_first_name_max_length"
+    ]
+  ],
+  "settings": {
+    "AUTH_USER_MODEL": "music.User",
+    "DEFAULT_AUTO_FIELD": "django.db.models.BigAutoField",
+    "USE_TZ": true,
+    "TIME_ZONE": "UTC",
+    "mysql_charset": "utf8mb4",
+    "isolation_level": "read committed"
+  },
+  "entities": {
+    "User": {
+      "table": "music_user",
+      "columns": {
+        "id": {
+          "model_attribute": "id",
+          "column": "id",
+          "field_class": "BigAutoField",
+          "null": false,
+          "minimum": 1
+        },
+        "username": {
+          "model_attribute": "username",
+          "column": "username",
+          "field_class": "CharField",
+          "null": false,
+          "max_length": 30,
+          "unique": true
+        },
+        "onboarding_completed": {
+          "model_attribute": "onboarding_completed",
+          "column": "onboarding_completed",
+          "field_class": "BooleanField",
+          "null": false,
+          "default": false
+        },
+        "origin": {
+          "model_attribute": "origin",
+          "column": "origin",
+          "field_class": "CharField",
+          "null": false,
+          "choices": [
+            "REAL",
+            "SIMULATED"
+          ],
+          "default": "REAL",
+          "max_length": 9
+        },
+        "is_active": {
+          "model_attribute": "is_active",
+          "column": "is_active",
+          "field_class": "BooleanField",
+          "null": false,
+          "default": true
+        },
+        "is_staff": {
+          "model_attribute": "is_staff",
+          "column": "is_staff",
+          "field_class": "BooleanField",
+          "null": false,
+          "default": false
+        }
+      },
+      "unique_constraints": {}
+    },
+    "Tag": {
+      "table": "music_tag",
+      "columns": {
+        "id": {
+          "model_attribute": "id",
+          "column": "id",
+          "field_class": "BigAutoField",
+          "null": false,
+          "minimum": 1
+        },
+        "name": {
+          "model_attribute": "name",
+          "column": "name",
+          "field_class": "CharField",
+          "null": false,
+          "max_length": 30
+        },
+        "kind": {
+          "model_attribute": "kind",
+          "column": "kind",
+          "field_class": "CharField",
+          "null": false,
+          "choices": [
+            "STYLE",
+            "MOOD",
+            "SCENE"
+          ],
+          "max_length": 5
+        },
+        "active": {
+          "model_attribute": "active",
+          "column": "active",
+          "field_class": "BooleanField",
+          "null": false,
+          "default": true
+        }
+      },
+      "unique_constraints": {
+        "uq_tag_kind_name": [
+          "kind",
+          "name"
+        ]
+      }
+    },
+    "Song": {
+      "table": "music_song",
+      "columns": {
+        "id": {
+          "model_attribute": "id",
+          "column": "id",
+          "field_class": "BigAutoField",
+          "null": false,
+          "minimum": 1
+        },
+        "title": {
+          "model_attribute": "title",
+          "column": "title",
+          "field_class": "CharField",
+          "null": false,
+          "max_length": 120
+        },
+        "artist": {
+          "model_attribute": "artist",
+          "column": "artist",
+          "field_class": "CharField",
+          "null": false,
+          "max_length": 120
+        },
+        "album": {
+          "model_attribute": "album",
+          "column": "album",
+          "field_class": "CharField",
+          "null": false,
+          "max_length": 120,
+          "default": ""
+        },
+        "duration_ms": {
+          "model_attribute": "duration_ms",
+          "column": "duration_ms",
+          "field_class": "PositiveIntegerField",
+          "null": false,
+          "minimum": 1,
+          "maximum": 86400000
+        },
+        "file_path": {
+          "model_attribute": "file_path",
+          "column": "file_path",
+          "field_class": "CharField",
+          "null": false,
+          "max_length": 255,
+          "default": ""
+        },
+        "mime": {
+          "model_attribute": "mime",
+          "column": "mime",
+          "field_class": "CharField",
+          "null": false,
+          "choices": [
+            "audio/mpeg",
+            "audio/wav",
+            "audio/ogg"
+          ],
+          "max_length": 10
+        },
+        "active": {
+          "model_attribute": "active",
+          "column": "active",
+          "field_class": "BooleanField",
+          "null": false,
+          "default": false
+        },
+        "source_name": {
+          "model_attribute": "source_name",
+          "column": "source_name",
+          "field_class": "CharField",
+          "null": false,
+          "max_length": 120
+        },
+        "source_url": {
+          "model_attribute": "source_url",
+          "column": "source_url",
+          "field_class": "CharField",
+          "null": false,
+          "max_length": 2000
+        },
+        "license_name": {
+          "model_attribute": "license_name",
+          "column": "license_name",
+          "field_class": "CharField",
+          "null": false,
+          "max_length": 120
+        },
+        "license_url": {
+          "model_attribute": "license_url",
+          "column": "license_url",
+          "field_class": "CharField",
+          "null": false,
+          "max_length": 2000
+        },
+        "attribution_text": {
+          "model_attribute": "attribution_text",
+          "column": "attribution_text",
+          "field_class": "TextField",
+          "null": false,
+          "default": ""
+        },
+        "checked_at": {
+          "model_attribute": "checked_at",
+          "column": "checked_at",
+          "field_class": "DateTimeField",
+          "null": true,
+          "default": null
+        },
+        "playback_allowed": {
+          "model_attribute": "playback_allowed",
+          "column": "playback_allowed",
+          "field_class": "BooleanField",
+          "null": false,
+          "default": false
+        },
+        "redistribution_allowed": {
+          "model_attribute": "redistribution_allowed",
+          "column": "redistribution_allowed",
+          "field_class": "BooleanField",
+          "null": false,
+          "default": false
+        },
+        "created_at": {
+          "model_attribute": "created_at",
+          "column": "created_at",
+          "field_class": "DateTimeField",
+          "null": false,
+          "server_value": "injected_now"
+        }
+      },
+      "unique_constraints": {}
+    },
+    "SongTag": {
+      "table": "music_song_tag",
+      "columns": {
+        "id": {
+          "model_attribute": "id",
+          "column": "id",
+          "field_class": "BigAutoField",
+          "null": false,
+          "minimum": 1
+        },
+        "song_id": {
+          "model_attribute": "song",
+          "column": "song_id",
+          "field_class": "ForeignKey",
+          "null": false,
+          "references": "Song",
+          "on_delete": "CASCADE",
+          "minimum": 1
+        },
+        "tag_id": {
+          "model_attribute": "tag",
+          "column": "tag_id",
+          "field_class": "ForeignKey",
+          "null": false,
+          "references": "Tag",
+          "on_delete": "CASCADE",
+          "minimum": 1
+        },
+        "weight": {
+          "model_attribute": "weight",
+          "column": "weight",
+          "field_class": "BigIntegerField",
+          "null": false,
+          "default": 1,
+          "const": 1
+        }
+      },
+      "unique_constraints": {
+        "uq_song_tag": [
+          "song_id",
+          "tag_id"
+        ]
+      }
+    },
+    "UserTag": {
+      "table": "music_user_tag",
+      "columns": {
+        "id": {
+          "model_attribute": "id",
+          "column": "id",
+          "field_class": "BigAutoField",
+          "null": false,
+          "minimum": 1
+        },
+        "user_id": {
+          "model_attribute": "user",
+          "column": "user_id",
+          "field_class": "ForeignKey",
+          "null": false,
+          "references": "User",
+          "on_delete": "CASCADE",
+          "minimum": 1
+        },
+        "tag_id": {
+          "model_attribute": "tag",
+          "column": "tag_id",
+          "field_class": "ForeignKey",
+          "null": false,
+          "references": "Tag",
+          "on_delete": "CASCADE",
+          "minimum": 1
+        }
+      },
+      "unique_constraints": {
+        "uq_user_tag": [
+          "user_id",
+          "tag_id"
+        ]
+      }
+    },
+    "Favorite": {
+      "table": "music_favorite",
+      "columns": {
+        "id": {
+          "model_attribute": "id",
+          "column": "id",
+          "field_class": "BigAutoField",
+          "null": false,
+          "minimum": 1
+        },
+        "user_id": {
+          "model_attribute": "user",
+          "column": "user_id",
+          "field_class": "ForeignKey",
+          "null": false,
+          "references": "User",
+          "on_delete": "CASCADE",
+          "minimum": 1
+        },
+        "song_id": {
+          "model_attribute": "song",
+          "column": "song_id",
+          "field_class": "ForeignKey",
+          "null": false,
+          "references": "Song",
+          "on_delete": "CASCADE",
+          "minimum": 1
+        },
+        "created_at": {
+          "model_attribute": "created_at",
+          "column": "created_at",
+          "field_class": "DateTimeField",
+          "null": false,
+          "server_value": "injected_now"
+        }
+      },
+      "unique_constraints": {
+        "uq_favorite": [
+          "user_id",
+          "song_id"
+        ]
+      }
+    },
+    "Playlist": {
+      "table": "music_playlist",
+      "columns": {
+        "id": {
+          "model_attribute": "id",
+          "column": "id",
+          "field_class": "BigAutoField",
+          "null": false,
+          "minimum": 1
+        },
+        "user_id": {
+          "model_attribute": "user",
+          "column": "user_id",
+          "field_class": "ForeignKey",
+          "null": false,
+          "references": "User",
+          "on_delete": "CASCADE",
+          "minimum": 1
+        },
+        "name": {
+          "model_attribute": "name",
+          "column": "name",
+          "field_class": "CharField",
+          "null": false,
+          "max_length": 60
+        },
+        "created_at": {
+          "model_attribute": "created_at",
+          "column": "created_at",
+          "field_class": "DateTimeField",
+          "null": false,
+          "server_value": "injected_now"
+        }
+      },
+      "unique_constraints": {}
+    },
+    "PlaylistSong": {
+      "table": "music_playlist_song",
+      "columns": {
+        "id": {
+          "model_attribute": "id",
+          "column": "id",
+          "field_class": "BigAutoField",
+          "null": false,
+          "minimum": 1
+        },
+        "playlist_id": {
+          "model_attribute": "playlist",
+          "column": "playlist_id",
+          "field_class": "ForeignKey",
+          "null": false,
+          "references": "Playlist",
+          "on_delete": "CASCADE",
+          "minimum": 1
+        },
+        "song_id": {
+          "model_attribute": "song",
+          "column": "song_id",
+          "field_class": "ForeignKey",
+          "null": false,
+          "references": "Song",
+          "on_delete": "CASCADE",
+          "minimum": 1
+        },
+        "created_at": {
+          "model_attribute": "created_at",
+          "column": "created_at",
+          "field_class": "DateTimeField",
+          "null": false,
+          "server_value": "injected_now"
+        }
+      },
+      "unique_constraints": {
+        "uq_playlist_song": [
+          "playlist_id",
+          "song_id"
+        ]
+      }
+    },
+    "Behavior": {
+      "table": "music_behavior",
+      "columns": {
+        "id": {
+          "model_attribute": "id",
+          "column": "id",
+          "field_class": "BigAutoField",
+          "null": false,
+          "minimum": 1
+        },
+        "event_id": {
+          "model_attribute": "event_id",
+          "column": "event_id",
+          "field_class": "UUIDField",
+          "null": false
+        },
+        "user_id": {
+          "model_attribute": "user",
+          "column": "user_id",
+          "field_class": "ForeignKey",
+          "null": false,
+          "references": "User",
+          "on_delete": "PROTECT",
+          "minimum": 1
+        },
+        "song_id": {
+          "model_attribute": "song",
+          "column": "song_id",
+          "field_class": "ForeignKey",
+          "null": false,
+          "references": "Song",
+          "on_delete": "PROTECT",
+          "minimum": 1
+        },
+        "listening_session_id": {
+          "model_attribute": "listening_session_id",
+          "column": "listening_session_id",
+          "field_class": "UUIDField",
+          "null": false
+        },
+        "kind": {
+          "model_attribute": "kind",
+          "column": "kind",
+          "field_class": "CharField",
+          "null": false,
+          "choices": [
+            "PLAY",
+            "COMPLETE",
+            "SKIP"
+          ],
+          "max_length": 8
+        },
+        "position_ms": {
+          "model_attribute": "position_ms",
+          "column": "position_ms",
+          "field_class": "PositiveIntegerField",
+          "null": false,
+          "minimum": 0,
+          "maximum": 86400000
+        },
+        "listened_ms": {
+          "model_attribute": "listened_ms",
+          "column": "listened_ms",
+          "field_class": "PositiveIntegerField",
+          "null": false,
+          "minimum": 0,
+          "maximum": 86400000
+        },
+        "effective_ms": {
+          "model_attribute": "effective_ms",
+          "column": "effective_ms",
+          "field_class": "PositiveIntegerField",
+          "null": false,
+          "minimum": 0,
+          "maximum": 86400000
+        },
+        "occurred_at": {
+          "model_attribute": "occurred_at",
+          "column": "occurred_at",
+          "field_class": "DateTimeField",
+          "null": false,
+          "server_value": "injected_now"
+        },
+        "origin": {
+          "model_attribute": "origin",
+          "column": "origin",
+          "field_class": "CharField",
+          "null": false,
+          "choices": [
+            "REAL",
+            "SIMULATED"
+          ],
+          "max_length": 9
+        }
+      },
+      "unique_constraints": {
+        "uq_behavior_event": [
+          "event_id"
+        ],
+        "uq_behavior_session_kind": [
+          "user_id",
+          "listening_session_id",
+          "kind"
+        ]
+      }
+    },
+    "RecommendationSnapshot": {
+      "table": "music_recommendation_snapshot",
+      "columns": {
+        "id": {
+          "model_attribute": "id",
+          "column": "id",
+          "field_class": "BigAutoField",
+          "null": false,
+          "minimum": 1
+        },
+        "user_id": {
+          "model_attribute": "user",
+          "column": "user_id",
+          "field_class": "ForeignKey",
+          "null": false,
+          "references": "User",
+          "on_delete": "PROTECT",
+          "minimum": 1
+        },
+        "day": {
+          "model_attribute": "day",
+          "column": "day",
+          "field_class": "DateField",
+          "null": false
+        },
+        "revision": {
+          "model_attribute": "revision",
+          "column": "revision",
+          "field_class": "PositiveIntegerField",
+          "null": false,
+          "minimum": 1
+        },
+        "algorithm_version": {
+          "model_attribute": "algorithm_version",
+          "column": "algorithm_version",
+          "field_class": "CharField",
+          "null": false,
+          "const": "adaptive-v0.1.0",
+          "max_length": 32
+        },
+        "alpha_target": {
+          "model_attribute": "alpha_target",
+          "column": "alpha_target",
+          "field_class": "FloatField",
+          "null": false,
+          "minimum": 0,
+          "maximum": 1
+        },
+        "alpha_effective": {
+          "model_attribute": "alpha_effective",
+          "column": "alpha_effective",
+          "field_class": "FloatField",
+          "null": true,
+          "minimum": 0,
+          "maximum": 1
+        },
+        "items": {
+          "model_attribute": "items",
+          "column": "items",
+          "field_class": "JSONField",
+          "null": false
+        },
+        "generated_at": {
+          "model_attribute": "generated_at",
+          "column": "generated_at",
+          "field_class": "DateTimeField",
+          "null": false,
+          "server_value": "injected_now"
+        }
+      },
+      "unique_constraints": {
+        "uq_snapshot_user_day": [
+          "user_id",
+          "day"
+        ]
+      }
+    }
+  }
+}

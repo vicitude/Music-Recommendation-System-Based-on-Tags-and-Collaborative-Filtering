@@ -1,0 +1,79 @@
+{
+  "spec": "SPEC-MUSIC-001",
+  "version": "v0.1.0",
+  "machines": {
+    "ListeningSession": {
+      "initial": "NONE",
+      "states": {
+        "NONE": {
+          "PLAY": "PLAYING"
+        },
+        "PLAYING": {
+          "COMPLETE": "COMPLETED",
+          "SKIP": "SKIPPED"
+        },
+        "COMPLETED": {},
+        "SKIPPED": {}
+      },
+      "guards": {
+        "COMPLETE": "min(listened_ms,elapsed_ms,duration_ms)>=ceil(0.8*duration_ms) and position_ms>=ceil(0.8*duration_ms)",
+        "SKIP": "position_ms <= duration_ms"
+      },
+      "idempotency": "优先检查event_id，同载荷返回原结果"
+    },
+    "Song": {
+      "initial": "DRAFT",
+      "states": {
+        "DRAFT": {
+          "PUBLISH": "ACTIVE"
+        },
+        "ACTIVE": {
+          "UNPUBLISH": "DRAFT"
+        }
+      },
+      "mapping": {
+        "DRAFT": "active=false",
+        "ACTIVE": "active=true"
+      },
+      "guards": {
+        "PUBLISH": "文件存在、媒体类型和大小通过、许可核验通过"
+      }
+    },
+    "Onboarding": {
+      "initial": "PENDING",
+      "states": {
+        "PENDING": {
+          "SELECT": "COMPLETED",
+          "SKIP": "COMPLETED"
+        },
+        "COMPLETED": {
+          "SELECT": "COMPLETED",
+          "SKIP": "COMPLETED"
+        }
+      },
+      "guards": {
+        "SELECT": "3至5个不同active标签",
+        "SKIP": "0个标签"
+      }
+    },
+    "Snapshot": {
+      "initial": "ABSENT",
+      "states": {
+        "ABSENT": {
+          "GET_OR_REFRESH": "READY"
+        },
+        "READY": {
+          "GET": "READY",
+          "REFRESH": "READY"
+        }
+      },
+      "guards": {
+        "REFRESH": "now >= generated_at+60s"
+      },
+      "actions": {
+        "GET_OR_REFRESH": "revision=1",
+        "REFRESH": "revision+=1"
+      }
+    }
+  }
+}

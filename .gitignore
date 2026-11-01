@@ -1,0 +1,13 @@
+.venv/
+frontend/node_modules/
+frontend/dist/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+media/
+logs/
+启动命令*.txt
+*密码*.txt
+*秘密*.txt

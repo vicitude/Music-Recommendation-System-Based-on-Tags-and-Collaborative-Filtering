@@ -1,0 +1,25 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<section class="module"><div class="description">
+<p>将 <strong>D:\AAA素材库\song</strong> 中与资料清单指纹一致的MP3复制到项目媒体目录，关联已导入的歌曲资料。原文件不会被移动、修改或删除。</p>
+<p><strong>保留草稿，不自动发布、不修改标签或许可信息。</strong>关联后点击“编辑与试听”，在歌曲编辑页播放器中试听，并核对风格、情绪和场景标签。</p>
+<p>当前有 {{ selectable_count }} 首可关联。已有音频永不覆盖；未导入、存在重复或已核验的资料不自动处理。逐首保存，部分失败时成功项保留；磁盘写入失败或数据库回滚可能留下未关联副本，不会自动删除。</p>
+</div></section>
+{% if error %}<p class="errornote" role="alert">{{ error }}</p>{% endif %}
+{% if result %}
+<section class="module"><h2>本次处理结果：关联 {{ result.linked }} · 跳过 {{ result.skipped }} · 失败 {{ result.failed }}</h2>
+<div class="catalog-table-wrap"><table class="catalog-table"><thead><tr><th>文件</th><th>结果</th></tr></thead><tbody>
+{% for entry in result.entries %}<tr><td>{{ entry.filename }}</td><td>{{ entry.message }}</td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endif %}
+<form method="post">{% csrf_token %}
+<div class="catalog-table-wrap"><table class="catalog-table"><thead><tr><th>选择</th><th>歌曲 / 歌手</th><th>关联状态</th><th>后台核对</th></tr></thead><tbody>
+{% for row in rows %}<tr>
+<td><input type="checkbox" name="selected" value="{{ row.item.sha256 }}" aria-label="选择{{ row.item.title }}" {% if row.selectable %}checked{% else %}disabled{% endif %}></td>
+<td><strong>{{ row.item.title }}</strong><br>{{ row.item.artist|default:'歌手待核对' }}<small class="catalog-source">{{ row.item.filename }}</small></td>
+<td>{{ row.state }}</td><td>{% if row.song %}<a href="{% url 'admin:music_song_change' row.song.pk %}">编辑与试听</a>{% else %}先核对资料{% endif %}</td>
+</tr>{% empty %}<tr><td colspan="4">暂无可用清单。</td></tr>{% endfor %}
+</tbody></table></div>
+<div class="submit-row catalog-submit"><label><input type="checkbox" name="confirm_audio" value="yes" required> 我确认复制所选音频供本机后台试听，仍保留草稿，不自动发布</label><input type="submit" value="确认关联音频" {% if not selectable_count %}disabled{% endif %}><a href="{% url 'admin:music_song_changelist' %}">返回歌曲列表</a></div>
+</form>
+{% endblock %}

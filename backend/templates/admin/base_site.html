@@ -1,0 +1,10 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} · 音律管理台{% endblock %}
+{% block responsive %}{{ block.super }}<link rel="stylesheet" href="{% static 'music/admin.css' %}?v=20261030-2">{% endblock %}
+{% block branding %}
+<div class="music-brand"><a href="{% url 'admin:index' %}" aria-label="音律内容管理首页"><span class="music-brand-mark" aria-hidden="true">♪</span><span>音律<span class="music-brand-dot">·</span><small>内容管理 / STUDIO</small></span></a></div>
+{% endblock %}
+{% block nav-global %}<a class="music-site-link" href="{{ site_url|default:'http://127.0.0.1:5173/' }}#/discover">打开音乐前台 ↗</a>{% endblock %}
+{% block footer %}<div class="music-footer">音律 MUSIC STUDIO <span>标签 × 行为 · 让每一次推荐有据可循</span></div>{% endblock %}

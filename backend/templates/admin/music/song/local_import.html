@@ -1,0 +1,11 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<section class="module"><div class="description"><p>已整理 {{ items|length }} 首MP3，{{ eligible_count }} 首资料完整。时长来自Windows媒体属性，缺失资料不猜填。</p><p><strong>本次只创建歌曲资料草稿，不复制音频、不自动发布、不开启播放，也不会出现在每日推荐中。</strong>歌手不明的4首请先补齐核对资料。</p><p>标签是人工辅助候选，未试听或经过声学模型验证；MEDIUM为歌曲常识候选，LOW为版本词提示或使用场景建议。可选择接受建议，后续逐首调整，不能作为论文评价真值。</p></div></section>
+{% if error %}<p class="errornote" role="alert">{{ error }}</p>{% endif %}
+<form method="post">{% csrf_token %}
+<div class="catalog-table-wrap"><table class="catalog-table"><thead><tr><th>选择</th><th>歌曲 / 歌手</th><th>时长</th><th>专辑</th><th>候选标签 / 依据</th><th>资料状态</th></tr></thead><tbody>
+{% for item in items %}<tr><td><input type="checkbox" name="selected" value="{{ item.sha256 }}" aria-label="选择{{ item.title }}" {% if item.eligible %}checked{% else %}disabled{% endif %}></td><td><strong>{{ item.title }}</strong><br>{{ item.artist|default:'歌手未识别' }}<small class="catalog-source">{{ item.filename }}</small></td><td>{{ item.duration_ms }} ms</td><td>{{ item.album|default:'—' }}</td><td>{% for tag in item.tag_suggestions %}<div class="catalog-tag"><strong>{{ tag.name }}</strong> · {{ tag.kind }} / {{ tag.confidence }}<small class="catalog-source">{{ tag.basis }}</small></div>{% empty %}<span class="quiet">无可靠候选，先保留空白</span>{% endfor %}</td><td>{% for issue in item.metadata_issues %}{{ issue }}<br>{% empty %}可导入草稿{% endfor %}</td></tr>{% empty %}<tr><td colspan="6">没有可用清单。</td></tr>{% endfor %}
+</tbody></table></div>
+<div class="submit-row catalog-submit"><label><input type="checkbox" name="confirm_drafts" value="yes" required> 我确认仅创建所选歌曲资料草稿，不代表核验播放许可</label>{% if can_apply_tags %}<label><input type="checkbox" name="accept_tags" value="yes"> 我已查看建议，接受将所选歌曲的候选标签作为初步标注（之后可改）</label>{% endif %}<input type="submit" value="确认导入资料草稿" {% if not eligible_count %}disabled{% endif %}><a href="{% url 'admin:music_song_changelist' %}">返回歌曲列表</a></div>
+</form>
+{% endblock %}

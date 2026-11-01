@@ -1,0 +1,4292 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SPEC-MUSIC-001",
+    "version": "v0.1.0",
+    "description": "提议；公开写操作也需CSRF；无已实现声明"
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/api/v1/auth/csrf/": {
+      "get": {
+        "operationId": "getCsrf",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "csrf_token": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "csrf_token"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register/": {
+      "post": {
+        "operationId": "register",
+        "security": [],
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Register"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login/": {
+      "post": {
+        "operationId": "login",
+        "security": [],
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout/": {
+      "post": {
+        "operationId": "logout",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "无响应体",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/": {
+      "get": {
+        "operationId": "getMe",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/interests/": {
+      "get": {
+        "operationId": "getInterests",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Interests"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "setInterests",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Interests"
+                },
+                "example": {
+                  "tag_ids": [
+                    1,
+                    2,
+                    3
+                  ],
+                  "onboarding_completed": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InterestRequest"
+              },
+              "example": {
+                "tag_ids": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tags/": {
+      "get": {
+        "operationId": "listTags",
+        "security": [],
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "STYLE",
+                "MOOD",
+                "SCENE"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tag"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/songs/": {
+      "get": {
+        "operationId": "listSongs",
+        "security": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 100,
+              "default": ""
+            }
+          },
+          {
+            "name": "tag_id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SongPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/songs/{id}/": {
+      "get": {
+        "operationId": "getSong",
+        "security": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Song"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/songs/{id}/stream/": {
+      "get": {
+        "operationId": "streamSong",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "Range",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "完整媒体",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "Accept-Ranges": {
+                "schema": {
+                  "type": "string",
+                  "const": "bytes"
+                }
+              }
+            },
+            "content": {
+              "audio/mpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "audio/wav": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "audio/ogg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "单段媒体",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "Accept-Ranges": {
+                "schema": {
+                  "type": "string",
+                  "const": "bytes"
+                }
+              },
+              "Content-Range": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "audio/mpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "audio/wav": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "audio/ogg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "416": {
+            "description": "Range不满足，无JSON体",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "Content-Range": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/favorites/": {
+      "get": {
+        "operationId": "listFavorites",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SongPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/favorites/{id}/": {
+      "put": {
+        "operationId": "addFavorite",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "无响应体",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removeFavorite",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "无响应体",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/playlists/": {
+      "get": {
+        "operationId": "listPlaylists",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Playlist"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createPlaylist",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Playlist"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaylistWrite"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/playlists/{id}/": {
+      "get": {
+        "operationId": "getPlaylist",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaylistDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "renamePlaylist",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Playlist"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaylistWrite"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deletePlaylist",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "无响应体",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/playlists/{id}/songs/{song_id}/": {
+      "put": {
+        "operationId": "addPlaylistSong",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "song_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "无响应体",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removePlaylistSong",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "song_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "无响应体",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/behaviors/": {
+      "post": {
+        "operationId": "recordBehavior",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BehaviorResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BehaviorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BehaviorRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/recommendations/daily/": {
+      "get": {
+        "operationId": "getDaily",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Daily"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/recommendations/daily/refresh/": {
+      "post": {
+        "operationId": "refreshDaily",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Daily"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "sessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionid"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error_code": {
+            "type": "string",
+            "enum": [
+              "VALIDATION_ERROR",
+              "AUTH_REQUIRED",
+              "AUTH_FAILED",
+              "CSRF_FAILED",
+              "PERMISSION_DENIED",
+              "NOT_FOUND",
+              "USERNAME_TAKEN",
+              "EVENT_CONFLICT",
+              "INVALID_TRANSITION",
+              "LIMIT_REACHED",
+              "RATE_LIMITED",
+              "MEDIA_UNAVAILABLE",
+              "INTERNAL_ERROR"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "error_code",
+          "message",
+          "details",
+          "request_id"
+        ],
+        "additionalProperties": false
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "username": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]{3,30}$"
+          },
+          "onboarding_completed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "onboarding_completed"
+        ],
+        "additionalProperties": false
+      },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "STYLE",
+              "MOOD",
+              "SCENE"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "Evidence": {
+        "type": "object",
+        "properties": {
+          "tag_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "maxItems": 2,
+            "uniqueItems": true
+          },
+          "neighbor_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 20
+          }
+        },
+        "required": [
+          "tag_ids",
+          "neighbor_count"
+        ],
+        "additionalProperties": false
+      },
+      "RecommendationItem": {
+        "type": "object",
+        "properties": {
+          "song_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "rank": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "CONTENT",
+              "CF",
+              "HYBRID",
+              "HOT"
+            ]
+          },
+          "content_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "cf_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "explanation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/Evidence"
+          }
+        },
+        "required": [
+          "song_id",
+          "rank",
+          "source",
+          "content_score",
+          "cf_score",
+          "score",
+          "explanation",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "Song": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "artist": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "album": {
+            "type": "string",
+            "maxLength": 120,
+            "default": ""
+          },
+          "duration_ms": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 86400000
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            }
+          },
+          "playable": {
+            "type": "boolean"
+          },
+          "stream_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "attribution_text": {
+            "type": "string"
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2000
+          },
+          "license_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "license_url": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "artist",
+          "album",
+          "duration_ms",
+          "tags",
+          "playable",
+          "stream_url",
+          "attribution_text",
+          "source_url",
+          "license_name",
+          "license_url"
+        ],
+        "additionalProperties": false
+      },
+      "Playlist": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "created_at"
+        ],
+        "additionalProperties": false
+      },
+      "PlaylistDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "songs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Song"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "songs"
+        ],
+        "additionalProperties": false
+      },
+      "PlaylistWrite": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      },
+      "Register": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]{3,30}$"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "additionalProperties": false
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]{3,30}$"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "additionalProperties": false
+      },
+      "InterestRequest": {
+        "type": "object",
+        "properties": {
+          "tag_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "uniqueItems": true,
+            "oneOf": [
+              {
+                "maxItems": 0
+              },
+              {
+                "minItems": 3,
+                "maxItems": 5
+              }
+            ]
+          }
+        },
+        "required": [
+          "tag_ids"
+        ],
+        "additionalProperties": false
+      },
+      "Interests": {
+        "type": "object",
+        "properties": {
+          "tag_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "uniqueItems": true
+          },
+          "onboarding_completed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "tag_ids",
+          "onboarding_completed"
+        ],
+        "additionalProperties": false
+      },
+      "BehaviorRequest": {
+        "type": "object",
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "song_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "listening_session_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "PLAY",
+              "COMPLETE",
+              "SKIP"
+            ]
+          },
+          "position_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 86400000
+          },
+          "listened_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 86400000
+          }
+        },
+        "required": [
+          "event_id",
+          "song_id",
+          "listening_session_id",
+          "kind",
+          "position_ms",
+          "listened_ms"
+        ],
+        "additionalProperties": false
+      },
+      "BehaviorResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "event_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "effective_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 86400000
+          }
+        },
+        "required": [
+          "id",
+          "event_id",
+          "effective_ms"
+        ],
+        "additionalProperties": false
+      },
+      "Daily": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "string",
+            "format": "date"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "algorithm_version": {
+            "type": "string",
+            "const": "adaptive-v0.1.0"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "alpha_target": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "alpha_effective": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "next_refresh_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecommendationItem"
+            },
+            "maxItems": 20
+          },
+          "empty_reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              null,
+              "NO_ELIGIBLE_SONGS",
+              "FILTERED_OUT"
+            ]
+          }
+        },
+        "required": [
+          "day",
+          "revision",
+          "algorithm_version",
+          "generated_at",
+          "alpha_target",
+          "alpha_effective",
+          "next_refresh_at",
+          "items",
+          "empty_reason"
+        ],
+        "additionalProperties": false
+      },
+      "SongPage": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Song"
+            }
+          }
+        },
+        "required": [
+          "count",
+          "page",
+          "page_size",
+          "results"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -1,0 +1,543 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SPEC-MUSIC-001 entity definitions",
+  "$defs": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "username": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]{3,30}$"
+        },
+        "onboarding_completed": {
+          "type": "boolean",
+          "default": false
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "REAL",
+            "SIMULATED"
+          ],
+          "default": "REAL"
+        },
+        "is_active": {
+          "type": "boolean",
+          "default": true
+        },
+        "is_staff": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "onboarding_completed",
+        "origin",
+        "is_active",
+        "is_staff"
+      ],
+      "additionalProperties": false
+    },
+    "Tag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "STYLE",
+            "MOOD",
+            "SCENE"
+          ]
+        },
+        "active": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "active"
+      ],
+      "additionalProperties": false
+    },
+    "Song": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "artist": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "album": {
+          "type": "string",
+          "maxLength": 120,
+          "default": ""
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 86400000
+        },
+        "file_path": {
+          "type": "string",
+          "maxLength": 255,
+          "default": ""
+        },
+        "mime": {
+          "type": "string",
+          "enum": [
+            "audio/mpeg",
+            "audio/wav",
+            "audio/ogg"
+          ]
+        },
+        "active": {
+          "type": "boolean",
+          "default": false
+        },
+        "source_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2000
+        },
+        "license_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "license_url": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2000
+        },
+        "attribution_text": {
+          "type": "string",
+          "default": ""
+        },
+        "checked_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time",
+          "default": null
+        },
+        "playback_allowed": {
+          "type": "boolean",
+          "default": false
+        },
+        "redistribution_allowed": {
+          "type": "boolean",
+          "default": false
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "artist",
+        "album",
+        "duration_ms",
+        "file_path",
+        "mime",
+        "active",
+        "source_name",
+        "source_url",
+        "license_name",
+        "license_url",
+        "attribution_text",
+        "checked_at",
+        "playback_allowed",
+        "redistribution_allowed",
+        "created_at"
+      ],
+      "additionalProperties": false
+    },
+    "SongTag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "song_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "tag_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "weight": {
+          "type": "integer",
+          "const": 1,
+          "default": 1
+        }
+      },
+      "required": [
+        "id",
+        "song_id",
+        "tag_id",
+        "weight"
+      ],
+      "additionalProperties": false
+    },
+    "UserTag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "user_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "tag_id": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "id",
+        "user_id",
+        "tag_id"
+      ],
+      "additionalProperties": false
+    },
+    "Favorite": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "user_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "song_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "user_id",
+        "song_id",
+        "created_at"
+      ],
+      "additionalProperties": false
+    },
+    "Playlist": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "user_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "user_id",
+        "name",
+        "created_at"
+      ],
+      "additionalProperties": false
+    },
+    "PlaylistSong": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "playlist_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "song_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "playlist_id",
+        "song_id",
+        "created_at"
+      ],
+      "additionalProperties": false
+    },
+    "Behavior": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "event_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "user_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "song_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "listening_session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "PLAY",
+            "COMPLETE",
+            "SKIP"
+          ]
+        },
+        "position_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 86400000
+        },
+        "listened_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 86400000
+        },
+        "effective_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 86400000
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "REAL",
+            "SIMULATED"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "event_id",
+        "user_id",
+        "song_id",
+        "listening_session_id",
+        "kind",
+        "position_ms",
+        "listened_ms",
+        "effective_ms",
+        "occurred_at",
+        "origin"
+      ],
+      "additionalProperties": false
+    },
+    "Evidence": {
+      "type": "object",
+      "properties": {
+        "tag_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "neighbor_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        }
+      },
+      "required": [
+        "tag_ids",
+        "neighbor_count"
+      ],
+      "additionalProperties": false
+    },
+    "RecommendationItem": {
+      "type": "object",
+      "properties": {
+        "song_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "CONTENT",
+            "CF",
+            "HYBRID",
+            "HOT"
+          ]
+        },
+        "content_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "cf_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence"
+        }
+      },
+      "required": [
+        "song_id",
+        "rank",
+        "source",
+        "content_score",
+        "cf_score",
+        "score",
+        "explanation",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "RecommendationSnapshot": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "user_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "day": {
+          "type": "string",
+          "format": "date"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "algorithm_version": {
+          "type": "string",
+          "const": "adaptive-v0.1.0"
+        },
+        "alpha_target": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "alpha_effective": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RecommendationItem"
+          },
+          "maxItems": 20
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "user_id",
+        "day",
+        "revision",
+        "algorithm_version",
+        "alpha_target",
+        "alpha_effective",
+        "items",
+        "generated_at"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
