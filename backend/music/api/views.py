@@ -3,28 +3,32 @@ from functools import wraps
 
 from django.core.paginator import Paginator
 from django.core.exceptions import RequestDataTooBig
-from django.db.models import Q
+from django.db.models import Max, Q
 from django.middleware.csrf import get_token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from music import behavior, daily, services
+from music import behavior, daily, follows, services
 from music.api.errors import ApiError
 from music.api.serializers import (
     BehaviorRequestSerializer,
+    CommentItemSerializer,
+    CommentWriteSerializer,
     InterestSerializer,
     LoginSerializer,
     PlaylistDetailSerializer,
     PlaylistSerializer,
     PlaylistWriteSerializer,
+    RatingWriteSerializer,
     RegisterSerializer,
     SongSerializer,
+    HistoryItemSerializer,
     TagSerializer,
     UserSerializer,
 )
-from music.models import Playlist, Song, Tag, UserTag
+from music.models import Behavior, Comment, Playlist, Rating, Song, Tag, UserTag
 from music.media import media_response, resolve_media
 
 
@@ -93,8 +97,84 @@ def paginated_songs(request, songs):
         "count": paginator.count,
         "page": page,
         "page_size": page_size,
-        "results": SongSerializer(paginator.page(page).object_list, many=True).data,
+        "results": SongSerializer(paginator.page(page).object_list, many=True, context={"request": request}).data,
     })
+
+
+def getUser(request: Request, id: int) -> Response:
+    check_query(request, set())
+    if request.body:
+        raise ApiError("VALIDATION_ERROR", ["request"])
+    return Response(follows.summary(request.user, follows.active_user(id)))
+
+
+def user_relations(request, id, direction):
+    check_query(request, {"page"})
+    if request.body:
+        raise ApiError("VALIDATION_ERROR", ["request"])
+    page = query_integer(request, "page", 1)
+    user = follows.active_user(id)
+    relations, member_field = follows.relation_list(request.user, user, direction)
+    paginator = Paginator(relations, 20)
+    if page > paginator.num_pages:
+        raise ApiError("NOT_FOUND", ["page"])
+    results = []
+    for relation in paginator.page(page).object_list:
+        member = getattr(relation, member_field)
+        results.append({"id": member.pk, "username": member.username,
+                        "is_following": relation.viewer_follows, "is_self": member.pk == request.user.pk})
+    return Response({"count": paginator.count, "page": page, "page_size": 20, "results": results})
+
+
+def listFollowing(request: Request, id: int) -> Response:
+    return user_relations(request, id, "following")
+
+
+def listFollowers(request: Request, id: int) -> Response:
+    return user_relations(request, id, "followers")
+
+
+def followUser(request: Request, id: int) -> Response:
+    check_query(request, set())
+    return Response(follows.change_follow(request.user, id, True))
+
+
+def unfollowUser(request: Request, id: int) -> Response:
+    check_query(request, set())
+    return Response(follows.change_follow(request.user, id, False))
+
+
+def listComments(request: Request, id: int) -> Response:
+    check_query(request, {"page"})
+    page = query_integer(request, "page", 1)
+    if not Song.objects.filter(pk=id, active=True).exists():
+        raise ApiError("NOT_FOUND")
+    comments = Comment.objects.filter(song_id=id).select_related("user").order_by("-created_at", "-id")
+    paginator = Paginator(comments, 20)
+    if page > paginator.num_pages:
+        raise ApiError("NOT_FOUND", ["page"])
+    return Response({
+        "items": CommentItemSerializer(paginator.page(page).object_list, many=True, context={"request": request}).data,
+        "total": paginator.count, "page": page, "page_size": 20,
+    })
+
+
+def createComment(request: Request, id: int) -> Response:
+    if not request.user.is_authenticated or not request.user.is_active:
+        raise ApiError("AUTH_REQUIRED")
+    if not Song.objects.filter(pk=id, active=True).exists():
+        raise ApiError("NOT_FOUND")
+    data = validated(CommentWriteSerializer, request)
+    comment = Comment.objects.create(user=request.user, song_id=id, content=data["content"])
+    return Response(CommentItemSerializer(comment, context={"request": request}).data, status=201)
+
+
+def deleteComment(request: Request, id: int) -> Response:
+    comment = Comment.objects.filter(pk=id, user=request.user, song__active=True).first()
+    if comment is None:
+        raise ApiError("NOT_FOUND")
+    comment.delete()
+    return Response(status=204)
 
 
 def getCsrf(request: Request) -> Response:
@@ -120,6 +200,26 @@ def logout(request: Request) -> Response:
 
 def getMe(request: Request) -> Response:
     return Response(UserSerializer(request.user).data)
+
+
+def getHistory(request: Request) -> Response:
+    check_query(request, {"page"})
+    page = query_integer(request, "page", 1)
+    page_size = 20
+    songs = Song.objects.filter(
+        active=True, behavior__user=request.user, behavior__kind=Behavior.PLAY,
+    ).annotate(last_played_at=Max("behavior__occurred_at")).order_by("-last_played_at", "id")
+    paginator = Paginator(songs, page_size)
+    if page > paginator.num_pages:
+        raise ApiError("NOT_FOUND", ["page"])
+    return Response({
+        "items": HistoryItemSerializer(
+            paginator.page(page).object_list, many=True, context={"request": request},
+        ).data,
+        "total": paginator.count,
+        "page": page,
+        "page_size": page_size,
+    })
 
 
 def getInterests(request: Request) -> Response:
@@ -167,7 +267,29 @@ def getSong(request: Request, id: int) -> Response:
         song = Song.objects.get(id=id, active=True)
     except Song.DoesNotExist:
         raise ApiError("NOT_FOUND", ["id"]) from None
-    return Response(SongSerializer(song).data)
+    return Response(SongSerializer(song, context={"request": request}).data)
+
+
+def getRating(request: Request, id: int) -> Response:
+    if not Song.objects.filter(id=id, active=True).exists():
+        raise ApiError("NOT_FOUND", ["song_id"])
+    score = Rating.objects.filter(user=request.user, song_id=id).values_list("score", flat=True).first()
+    return Response({"score": score})
+
+
+def setRating(request: Request, id: int) -> Response:
+    data = validated(RatingWriteSerializer, request)
+    if not Song.objects.filter(id=id, active=True).exists():
+        raise ApiError("NOT_FOUND", ["song_id"])
+    rating, _ = Rating.objects.update_or_create(
+        user=request.user, song_id=id, defaults={"score": data["score"]},
+    )
+    return Response({"score": rating.score})
+
+
+def removeRating(request: Request, id: int) -> Response:
+    Rating.objects.filter(user=request.user, song_id=id).delete()
+    return Response(status=204)
 
 
 def listFavorites(request: Request) -> Response:
@@ -226,14 +348,14 @@ def removePlaylistSong(request: Request, id: int, song_id: int) -> Response:
 
 
 def getDaily(request: Request) -> Response:
-    check_query(request, set())
-    snapshot = daily.get_daily(user_id=request.user.id, now=request.now)
+    check_query(request, {"scene_id"})
+    snapshot = daily.get_daily(user_id=request.user.id, now=request.now, selected_scene_id=query_integer(request, "scene_id"))
     return Response(daily.serialize_daily(snapshot=snapshot, user_id=request.user.id, now=request.now))
 
 
 def refreshDaily(request: Request) -> Response:
-    check_query(request, set())
-    snapshot = daily.refresh_daily(user_id=request.user.id, now=request.now)
+    check_query(request, {"scene_id"})
+    snapshot = daily.refresh_daily(user_id=request.user.id, now=request.now, selected_scene_id=query_integer(request, "scene_id"))
     return Response(daily.serialize_daily(snapshot=snapshot, user_id=request.user.id, now=request.now))
 
 

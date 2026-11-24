@@ -1,0 +1,23 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<section class="module"><div class="description">
+<p><strong>只读诊断，不修改账号、行为或每日推荐。</strong>此页按当前数据重新试算最多10首，并非历史快照回放；同一账号的前台结果可能因收藏、时间和快照版本而不同。</p>
+<form method="get"><label for="diagnostic-user">诊断账号</label> <select id="diagnostic-user" name="user_id" required><option value="">请选择账号</option>{% for member in users %}<option value="{{ member.pk }}" {% if selected.pk == member.pk %}selected{% endif %}>{{ member.username }} · {{ member.get_origin_display }} · ID {{ member.pk }}</option>{% endfor %}</select> <input type="submit" value="查看当前试算"></form>
+</div></section>
+{% if error %}<p class="errornote" role="alert">{{ error }}</p>{% endif %}
+{% if report %}
+<section class="module"><h2>{{ selected.username }} · 当前计算依据</h2><div class="description">
+<p>试算时间：{{ report.now|date:'Y-m-d H:i:s T' }}；数据分组：{{ report.origin }}（真实与模拟不混用）。</p>
+<p>兴趣标签：{% for tag in report.interests %}{{ tag }}{% if not forloop.last %}、{% endif %}{% empty %}未选择{% endfor %}。</p>
+<p>正反馈歌曲数：<strong>{{ report.positive_count }}</strong>（收藏/有效听完按歌曲去重）；同组其他活跃账号：{{ report.peer_count }}。</p>
+<p>当前时间上下文：<strong>{{ report.time_context }}</strong>；当前场景：<strong>{% if report.scene_name %}{{ report.scene_name }}{% else %}无{% endif %}</strong>；来源：{% if report.scene_source == 'USER' %}用户选择{% elif report.scene_source == 'TIME' %}上海时段默认{% else %}无场景{% endif %}；候选歌曲场景命中率：{{ report.scene_match_percent|floatformat:1 }}%。</p>
+<p>目标标签权重 α：{{ report.alpha_target|floatformat:4 }}；实际 α：{% if report.alpha_effective == None %}不适用{% else %}{{ report.alpha_effective|floatformat:4 }}（标签 {{ report.content_percent|floatformat:1 }}% / 用户协同 {{ report.user_cf_percent|floatformat:1 }}% / 歌曲协同 {{ report.item_cf_percent|floatformat:1 }}% / NCF {{ report.ncf_percent|floatformat:1 }}%）{% endif %}。</p>
+<p><strong>{{ report.route }}</strong></p>
+<p>目标 α = 0.30 + 0.60 × 10 / (10 + 正反馈歌曲数)。三路按可用信号自动归一化，缺少一路时权重分配给剩余路由。相似用户须与目标至少有2首共同正反馈；“贡献数”是对每首候选提供协同依据的数量，不是全部账号数。</p>
+</div></section>
+<section class="module"><h2>当前试算 · {{ report.rows|length }}首</h2><div class="catalog-table-wrap"><table class="catalog-table"><thead><tr><th>排名</th><th>歌曲</th><th>来源</th><th>标签分</th><th>用户协同</th><th>歌曲协同</th><th>NCF分</th><th>兼容协同分</th><th>融合分</th><th>贡献邻居</th><th>解释依据</th></tr></thead><tbody>
+{% for row in report.rows %}<tr><td>{{ row.rank }}</td><td><a href="{% url 'admin:music_song_change' row.song_id %}">{{ row.title }}</a><br>{{ row.artist }}</td><td>{{ row.source_label }}</td><td>{{ row.content_score|floatformat:6 }}</td><td>{{ row.user_cf_score|floatformat:6 }}</td><td>{{ row.item_cf_score|floatformat:6 }}</td><td>{{ row.ncf_score|floatformat:6 }}</td><td>{{ row.cf_score|floatformat:6 }}</td><td>{{ row.score|floatformat:6 }}</td><td>{{ row.evidence.neighbor_count }}</td><td>{{ row.explanation }}<small class="catalog-source">证据标签：{% for tag in row.tags %}{{ tag }} {% empty %}无{% endfor %}</small></td></tr>{% empty %}<tr><td colspan="11">暂无可推荐候选，请检查已发布音频和过滤条件。</td></tr>{% endfor %}
+</tbody></table></div><div class="description"><p>三路分数是各路归一化的0—1分数，不是概率。兼容协同分是用户协同与歌曲协同的合并展示；融合分按三路有效权重计算；表中保留6位小数，有舍入误差。热门补充分数为0，并不代表歌曲质量差。</p></div></section>
+<section class="module"><h2>最新已保存快照（不是本次试算）</h2><div class="description">{% if report.snapshot %}<p>推荐日 {{ report.snapshot.day }} · 第{{ report.snapshot.revision }}版 · {{ report.snapshot.algorithm_version }} · 保存{{ report.snapshot.items|length }}首；生成于 {{ report.snapshot.generated_at|date:'Y-m-d H:i:s T' }}。</p>{% else %}<p>该账号尚无每日快照；查看诊断不会创建快照。</p>{% endif %}</div></section>
+{% endif %}
+{% endblock %}

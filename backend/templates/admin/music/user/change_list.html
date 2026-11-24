@@ -1,0 +1,5 @@
+{% extends "admin/change_list.html" %}
+{% block object-tools-items %}
+{% if perms.music.view_user and perms.music.view_song %}<li><a href="{% url 'admin:music_recommendation_diagnostics' %}">推荐算法诊断</a></li>{% endif %}
+{{ block.super }}
+{% endblock %}

@@ -72,7 +72,7 @@ class AdminInterfaceTests(TestCase):
         self.client.force_login(self.admin)
         response = self.client.get("/admin/")
         self.assertTemplateUsed(response, "admin/index.html")
-        for text in ("管理入口", "一首歌的上架路径", "我的近期操作", "/admin/music/song/", "/admin/music/tag/"):
+        for text in ("管理入口", "常用操作", "扫描并批量打标签", "批量发布歌曲", "查看已发布歌曲", "标签词库", "推荐算法诊断", "一首歌的上架路径", "我的近期操作", "/admin/music/song/", "/admin/music/tag/"):
             self.assertContains(response, text)
         limited = User.objects.create_user(username="limited_staff", is_staff=True)
         self.client.force_login(limited)
@@ -92,10 +92,25 @@ class AdminInterfaceTests(TestCase):
                 self.assertEqual(response.status_code, 200)
                 self.assertContains(response, "/static/music/admin.css")
         response = self.client.get("/admin/music/song/add/")
-        for text in ("歌曲信息", "音频与预览", "来源与许可", "核验与发布", "rights_confirmed", "preview_confirmed", "csrfmiddlewaretoken"):
+        for text in ("歌曲信息", "音频与预览", "保存并发布", "csrfmiddlewaretoken"):
             self.assertContains(response, text)
+        self.assertNotContains(response, "来源与许可")
+        self.assertNotContains(response, "rights_confirmed")
         self.assertContains(response, "multipart/form-data")
         self.assertEqual(Song.objects.count(), 0)
+
+    def test_adm_m_014_pagination_current_marker_tracks_requested_page(self):
+        self.client.force_login(self.admin)
+        Song.objects.bulk_create([
+            Song(title=f"Pagination test {number}", artist="TEST_ONLY", duration_ms=1000, mime="audio/mpeg")
+            for number in range(40)
+        ])
+        for current, other in ((1, 2), (2, 1)):
+            response = self.client.get(f"/admin/music/song/?p={current}")
+            self.assertContains(response, f'<span class="this-page">{current}</span>', html=True)
+            self.assertRegex(response.content.decode(), rf'<a href="\?p={other}"[^>]*>{other}</a>')
+            self.assertEqual(len(response.context["cl"].result_list), 20)
+            self.assertContains(response, "显示全部")
 
     def test_adm_m_008_local_static_exists_and_trust_is_not_a_csrf_bypass(self):
         self.assertIsNotNone(finders.find("music/admin.css"))
@@ -112,6 +127,20 @@ class AdminInterfaceTests(TestCase):
 
 
 class AdminLayoutTests(SimpleTestCase):
+    def test_adm_m_013_current_page_is_dark_other_pages_are_light(self):
+        from pathlib import Path
+        import re
+
+        css = Path(finders.find("music/admin.css")).read_text(encoding="utf-8")
+        for selector, background, color in (
+            ("#changelist .paginator .this-page", "#44394f", "#fff8f0"),
+            ("#changelist .paginator a:not(.showall)", "#eee6dd", "#302937"),
+        ):
+            match = re.search(re.escape(selector) + r"\s*\{([^}]+)\}", css)
+            self.assertIsNotNone(match)
+            self.assertIn(f"background: {background}", match[1])
+            self.assertIn(f"color: {color}", match[1])
+
     def test_adm_m_009_dashboard_width_overrides_legacy_dashboard_selector(self):
         from pathlib import Path
         import re
@@ -130,6 +159,32 @@ class AdminLayoutTests(SimpleTestCase):
         response = self.client.get("/admin/login/")
         self.assertEqual(response.status_code, 200)
         html = response.content.decode("utf-8")
-        self.assertIn("/static/music/admin.css?v=20261030-2", html)
+        self.assertIn("/static/music/admin.css?v=20261110-1", html)
         self.assertLess(html.index("/static/admin/css/base.css"), html.index("/static/music/admin.css"))
         self.assertLess(html.index("/static/admin/css/responsive.css"), html.index("/static/music/admin.css"))
+
+    def test_adm_m_011_single_select_geometry_overrides_fixed_framework_height(self):
+        from pathlib import Path
+        import re
+
+        css = Path(finders.find("music/admin.css")).read_text(encoding="utf-8")
+        match = re.search(r"(?:^|\n)select:not\(\[multiple\]\)\s*\{([^}]+)\}", css)
+        self.assertIsNotNone(match)
+        declarations = dict(item.strip().split(":", 1) for item in match[1].split(";") if item.strip())
+        expected = {"height": "auto", "min-height": "44px", "line-height": "1.5", "padding": "8px 36px 8px 12px"}
+        for name, value in expected.items():
+            self.assertEqual(declarations[name].strip(), value)
+        self.assertGreater(css.index(match[0]), css.index('input[type="text"]'))
+        self.assertGreaterEqual(44 - 8 * 2 - 2, 13 * 1.5)
+
+    def test_adm_m_012_tag_select_width_is_scoped_and_responsive(self):
+        from pathlib import Path
+        import re
+
+        css = Path(finders.find("music/admin.css")).read_text(encoding="utf-8")
+        match = re.search(r"\.inline-group \.field-tag select:not\(\[multiple\]\)\s*\{([^}]+)\}", css)
+        self.assertIsNotNone(match)
+        declarations = dict(item.strip().split(":", 1) for item in match[1].split(";") if item.strip())
+        for name, value in {"width": "24rem", "max-width": "100%", "min-width": "0"}.items():
+            self.assertEqual(declarations[name].strip(), value)
+        self.assertNotIn("appearance: none", match[1])

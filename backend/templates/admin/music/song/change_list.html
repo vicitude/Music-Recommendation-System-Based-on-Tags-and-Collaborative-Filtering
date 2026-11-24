@@ -1,5 +1,8 @@
 {% extends "admin/change_list.html" %}
 {% block object-tools-items %}
+{% if perms.music.view_song or perms.music.change_song %}<li><a href="{% url 'admin:music_song_published' %}">查看已发布歌曲</a></li>{% endif %}
+{% if perms.music.change_song %}<li><a href="{% url 'admin:music_song_batch_publish' %}">批量发布歌曲</a></li>{% endif %}
+{% if perms.music.add_song and perms.music.change_song %}<li><a href="{% url 'admin:music_song_batch_import' %}">扫描目录并批量导入</a></li>{% endif %}
 {% if perms.music.change_song %}<li><a href="{% url 'admin:music_song_local_audio' %}">批量关联本机音频</a></li>{% endif %}
 {% if perms.music.add_song and perms.music.change_song %}<li><a href="{% url 'admin:music_song_local_import' %}">导入本地歌曲资料</a></li>{% endif %}
 {{ block.super }}

@@ -2,6 +2,40 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "SPEC-MUSIC-001 entity definitions",
   "$defs": {
+    "Comment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "user_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "song_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "content": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "user_id",
+        "song_id",
+        "content",
+        "created_at"
+      ],
+      "additionalProperties": false
+    },
     "User": {
       "type": "object",
       "properties": {
@@ -267,6 +301,45 @@
       ],
       "additionalProperties": false
     },
+    "Rating": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "user_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "song_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "user_id",
+        "song_id",
+        "score",
+        "created_at",
+        "updated_at"
+      ],
+      "additionalProperties": false
+    },
     "Playlist": {
       "type": "object",
       "properties": {
@@ -438,6 +511,9 @@
           "enum": [
             "CONTENT",
             "CF",
+            "USER_CF",
+            "ITEM_CF",
+            "NCF",
             "HYBRID",
             "HOT"
           ]
@@ -448,6 +524,21 @@
           "maximum": 1
         },
         "cf_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "user_cf_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "item_cf_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "ncf_score": {
           "type": "number",
           "minimum": 0,
           "maximum": 1
@@ -472,6 +563,9 @@
         "source",
         "content_score",
         "cf_score",
+        "user_cf_score",
+        "item_cf_score",
+        "ncf_score",
         "score",
         "explanation",
         "evidence"
@@ -524,6 +618,29 @@
         "generated_at": {
           "type": "string",
           "format": "date-time"
+        },
+        "route_weights": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "scene_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "scene_source": {
+          "type": "string"
+        },
+        "scene_match_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
         }
       },
       "required": [
@@ -535,7 +652,39 @@
         "alpha_target",
         "alpha_effective",
         "items",
-        "generated_at"
+        "generated_at",
+        "route_weights",
+        "scene_id",
+        "scene_source",
+        "scene_match_rate"
+      ],
+      "additionalProperties": false
+    },
+    "Follow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "target_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "source_id",
+        "target_id",
+        "created_at"
       ],
       "additionalProperties": false
     }

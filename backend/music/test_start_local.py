@@ -1,12 +1,28 @@
 from types import SimpleNamespace
+import tempfile
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from django.test import SimpleTestCase
 
-from start_local import StartupError, execute_startup, inspect_database, obtain_password, validate_environment
+from start_local import StartupError, execute_startup, inspect_database, local_audio_environment, obtain_password, obtain_secret_key, validate_environment
 
 
 class LocalStartupTests(SimpleTestCase):
+    def test_local_ffmpeg_detection_only_supplies_process_setting(self):
+        environment = {"PATH": "unchanged"}
+        with patch("start_local.Path.is_file", return_value=True):
+            values = local_audio_environment(environment)
+        self.assertEqual(values["LOCAL_IMPORT_FFMPEG"].replace("\\", "/"), "D:/ffmpeg/ffmpeg.exe")
+        self.assertEqual(environment, {"PATH": "unchanged"})
+
+    def test_explicit_decoder_is_preserved_and_missing_local_decoder_is_optional(self):
+        with patch("start_local.Path.is_file", return_value=False):
+            self.assertEqual(local_audio_environment({}), {})
+        with patch("start_local.Path.is_file") as check:
+            self.assertEqual(local_audio_environment({"LOCAL_IMPORT_FFMPEG": "custom.exe"}), {})
+            check.assert_not_called()
+
     def database(self, tables=None, *, version="9.2.0", charset="utf8mb4", account="music_recommender_app@localhost", recorded=True):
         cursor = MagicMock()
         cursor.fetchone.side_effect = [
@@ -26,19 +42,42 @@ class LocalStartupTests(SimpleTestCase):
 
     def test_noninteractive_missing_password_never_prompts(self):
         with patch("start_local.getpass.getpass") as prompt, self.assertRaises(StartupError):
-            obtain_password({}, False)
+            obtain_password({"MYSQL_PASSWORD_FILE": str(Path("missing-password-file"))}, False)
         prompt.assert_not_called()
 
     def test_empty_and_example_password_are_rejected(self):
         for password in ("", "change-me"):
             with patch("start_local.getpass.getpass", return_value=password), self.assertRaises(StartupError):
-                obtain_password({"MYSQL_PASSWORD": password}, True)
+                obtain_password({"MYSQL_PASSWORD": password, "MYSQL_PASSWORD_FILE": str(Path("missing-password-file"))}, True)
 
     def test_interactive_password_not_saved_to_environment(self):
-        environment = {}
+        environment = {"MYSQL_PASSWORD_FILE": str(Path("missing-password-file"))}
         with patch("start_local.getpass.getpass", return_value="test-only-value"):
             self.assertEqual(obtain_password(environment, True), "test-only-value")
-        self.assertEqual(environment, {})
+        self.assertEqual(environment["MYSQL_PASSWORD_FILE"], str(Path("missing-password-file")))
+
+    def test_password_file_is_used_without_prompt(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "password.txt"
+            path.write_text("file-password,CaseSensitive!\n", encoding="utf-8")
+            with patch("start_local.getpass.getpass") as prompt:
+                self.assertEqual(obtain_password({"MYSQL_PASSWORD_FILE": str(path)}, False), "file-password,CaseSensitive!")
+            prompt.assert_not_called()
+
+    def test_password_file_must_be_single_line(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "password.txt"
+            path.write_text("first\nsecond", encoding="utf-8")
+            with self.assertRaises(StartupError):
+                obtain_password({"MYSQL_PASSWORD_FILE": str(path)}, False)
+
+    def test_secret_key_is_stable_in_local_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "secret.key"
+            first = obtain_secret_key({"DJANGO_SECRET_KEY_FILE": str(path)})
+            second = obtain_secret_key({"DJANGO_SECRET_KEY_FILE": str(path)})
+            self.assertEqual(first, second)
+            self.assertNotEqual(first, "development-only-change-me")
 
     def test_database_empty_or_owned_migrated_tables_allowed(self):
         self.assertEqual(inspect_database(self.database(), {"django_migrations", "music_user"}), "empty")

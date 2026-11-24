@@ -1,0 +1,49 @@
+# SPEC-DIVERSITY-001：多样性与惊喜度重排
+
+## 0 元数据
+状态：已批准；版本v1.0.0；代码backend/music/diversity.py、backend/music/recommendation.py、backend/music/test_diversity.py；无迁移、无API字段和新依赖。先实现纯函数，调用方显式传入权重。
+
+## 1 术语
+|术语|英文|定义|代码|
+|---|---|---|---|
+|标签相异度|tag_distance|1-Jaccard；两歌无标签时为0|tag_distance|
+|惊喜度|serendipity|歌曲非热门且与用户历史标签存在关联的分数|serendipity_score|
+|MMR重排|MMR|相关性与新颖/相异度的线性贪心重排|rerank_diverse|
+
+## 2 场景
+```gherkin
+Feature: 推荐多样性
+ Scenario: 标签相同歌曲不连续扎堆
+  Given 相关性分数已排序且歌曲标签已知
+  When 执行MMR重排
+  Then 后续歌曲必须按相关性与已选歌曲的最大相似度重新计算
+ Scenario: 新颖歌曲得到探索机会
+  Given 一首歌曲相关性相同但历史曝光较少
+  When 惊喜度权重大于0
+  Then 该歌曲优先级不低于热门同分歌曲
+ Scenario: 权重为零保持旧排序
+  Given diversity_weight=0且serendipity_weight=0
+  When 重排
+  Then 输出等于输入前limit项
+```
+
+## 3 接口
+`tag_distance(left_tags: tuple[int,...], right_tags: tuple[int,...]) -> float`；`serendipity_score(*, song_id:int, user_history_tags:set[int], song_tags:dict[int,tuple[int,...]], popularity:dict[int,int]) -> float`；`rerank_diverse(*, items:list[dict], song_tags:dict[int,tuple[int,...]], popularity:dict[int,int], user_history_tags:set[int], limit:int, diversity_weight:float=0.25, serendipity_weight:float=0.10) -> list[dict]`。不修改输入item字典；返回新列表并重写rank。
+
+## 4 数据校验
+歌曲ID正整数；标签ID正整数且每首去重；popularity为非负整数；limit为0..20；权重为有限非负数且两者之和<=1。缺失歌曲标签按空元组，缺失热度按0。输出每项保留原字段，score不被重排分数覆盖。
+
+## 5 规则与Properties
+相异度=1-|A∩B|/|A∪B|，并集为空时0。惊喜度=0.6*(1-min(popularity/ max_pop,1))+0.4*(|history_tags∩song_tags|>0)。MMR候选效用=(1-d-w_s)*原score+d*平均已选相异度+w_s*serendipity；首项效用只含原score与惊喜度。每次选择效用最高，平分按原score降序、song_id升序。P-DIV-01权重全0保持输入顺序；P-DIV-02输出无重复且长度不超过limit；P-DIV-03相同输入确定性。
+
+## 6 错误
+输入不合规则ValueError；不新增API错误码和日志。
+
+## 7 测试矩阵
+UT-DIV-001标签Jaccard；UT-DIV-002惊喜度；UT-DIV-003全零保持顺序；UT-DIV-004重排多样性；UT-DIV-005权重/输入校验；PT-DIV-001候选闭包；PT-DIV-002确定性。
+
+## 8 非功能
+仅标准库；候选最多20，复杂度O(limit²)；不改数据库。测试覆盖边界和随机排列。
+
+## 9 约束与变更
+不宣称多样性提升，正式472曲库前必须做前后对比；惊喜度是可解释代理指标，不是心理学真实惊喜。ECharts和新模拟实验另阶段。Git变更日志不虚构。

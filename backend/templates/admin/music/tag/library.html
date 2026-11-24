@@ -1,0 +1,28 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% block content %}
+<section class="module"><div class="description">
+<p><strong>Tag object (11) 只是标签记录的内部编号，不是音乐分类。</strong>歌曲下拉框现在显示“风格｜流行”等中文名称。</p>
+<p>这里提供53个正式选项：曲风27项、情绪15项、后台标准场景11项。前台扩展场景和历史旧标签不直接混入正式词库。不是音乐世界的全部分类，也不要求每首填满。</p>
+<p>建议每首先选1—2个最明确的风格、1—2个情绪、0—3个场景；这是建议，不是硬性限制。不懂的细分类别不要勉强选，未知可留空。同义词不要大量叠加，不能只凭歌名或歌手判断。</p>
+<p><strong>这里保存的是下拉选项，不是给歌曲打标签。</strong>加入选项后，返回歌曲编辑页刷新，在底部“歌曲标签”逐行选择，然后保存草稿。不会自动发布，也不会标记已人工核对。</p>
+<p><a href="{% url 'admin:music_song_changelist' %}">返回歌曲列表</a> · <a href="{% url 'admin:music_tag_changelist' %}">查看数据库中的全部标签</a></p>
+</div></section>
+{% if error %}<p class="errornote" role="alert">{{ error }}</p>{% endif %}
+<form method="post" id="tag-library-form">{% csrf_token %}
+{% if can_import %}<div class="submit-row catalog-submit"><button type="button" id="select-missing-tags">选择全部未入库选项</button><button type="button" id="clear-tag-selection">取消本页勾选</button></div>{% endif %}
+{% for group in groups %}
+<section class="module"><h2>{{ group.title }} · {{ group.items|length }}项</h2>
+<div class="catalog-table-wrap"><table class="catalog-table"><thead><tr><th>加入选项</th><th>标签名称</th><th>怎么理解 / 什么时候选</th><th>当前状态</th></tr></thead><tbody>
+{% for item in group.items %}<tr>
+<td>{% if can_import and not item.tag %}<input type="checkbox" name="selected" value="{{ item.key }}" aria-label="加入{{ item.name }}">{% else %}—{% endif %}</td>
+<td><strong>{{ item.name }}</strong></td><td>{{ item.description }}</td>
+<td>{% if item.tag %}{% if item.tag.active %}已可选择{% else %}已停用（不会自动启用）{% endif %}{% else %}未入库{% endif %}</td>
+</tr>{% endfor %}
+</tbody></table></div></section>
+{% endfor %}
+{% if custom_tags %}<section class="module"><h2>已有的其他标签</h2><div class="description"><p>以下为已有自定义标签，不在常用词表内不代表无效，不会被覆盖：</p><ul>{% for tag in custom_tags %}<li>{{ tag }}</li>{% endfor %}</ul></div></section>{% endif %}
+{% if can_import %}<div class="submit-row catalog-submit"><label><input type="checkbox" name="confirm_library" value="yes" required> 我确认仅补充所选标签选项，不自动修改歌曲标签</label><input type="submit" value="加入所选标签选项"></div>{% else %}<p>你可以查看指南；新增选项需要标签添加权限。</p>{% endif %}
+</form>
+{% endblock %}
+{% block extrahead %}{{ block.super }}<script src="{% static 'music/tag-library.js' %}" defer></script>{% endblock %}

@@ -20,7 +20,7 @@ class ApiRequestMiddleware:
                 response = JsonResponse(ApiError("NOT_FOUND").body(request.request_id), status=404)
             response["X-Spec-Version"] = "v0.1.0"
             response["X-Request-ID"] = request.request_id
-            if request.path.startswith("/api/v1/recommendations/daily/"):
+            if request.path.startswith(("/api/v1/recommendations/daily/", "/api/v1/users/")):
                 response["Cache-Control"] = "private,no-store"
         return response
 

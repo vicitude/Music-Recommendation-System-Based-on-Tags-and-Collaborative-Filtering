@@ -1,0 +1,11 @@
+{% extends "admin/change_form.html" %}
+{% block submit_buttons_bottom %}
+{% if has_change_permission or add %}
+<div class="submit-row">
+<input type="submit" name="_publish" value="保存并发布" class="default">
+{% if original.active %}<input type="submit" name="_unpublish" value="保存并下架">{% endif %}
+<p>{% if original.active %}当前已发布，普通保存会保留上架状态。{% else %}当前为草稿，普通保存不会发布。{% endif %}发布后可在前台曲库查看；标签可以随时编辑，修改后请刷新每日推荐。</p>
+</div>
+{% endif %}
+{{ block.super }}
+{% endblock %}

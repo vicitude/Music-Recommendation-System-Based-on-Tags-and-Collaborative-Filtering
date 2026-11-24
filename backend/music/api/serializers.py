@@ -4,7 +4,7 @@ from uuid import UUID
 from rest_framework import serializers
 
 from music.media import playable_media_path
-from music.models import Playlist, PlaylistSong, Song, SongTag, Tag, User
+from music.models import Playlist, PlaylistSong, Rating, Song, SongTag, Tag, User
 
 
 class StrictSerializer(serializers.Serializer):
@@ -28,6 +28,26 @@ class StrictIntegerField(serializers.IntegerField):
         if type(data) is not int:
             self.fail("invalid")
         return super().to_internal_value(data)
+
+
+class CommentWriteSerializer(StrictSerializer):
+    content = StrictCharField(min_length=1, max_length=500, trim_whitespace=True)
+
+
+class CommentItemSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    song_id = serializers.IntegerField()
+    author = serializers.SerializerMethodField()
+    content = serializers.CharField()
+    created_at = serializers.DateTimeField()
+    can_delete = serializers.SerializerMethodField()
+
+    def get_author(self, comment):
+        return {"id": comment.user_id, "username": comment.user.username}
+
+    def get_can_delete(self, comment):
+        user = self.context["request"].user
+        return bool(user.is_authenticated and user.is_active and user.pk == comment.user_id)
 
 
 class UsernameField(StrictCharField):
@@ -73,6 +93,10 @@ class PlaylistWriteSerializer(StrictSerializer):
     name = StrictCharField(min_length=1, max_length=60)
 
 
+class RatingWriteSerializer(StrictSerializer):
+    score = StrictIntegerField(min_value=1, max_value=5)
+
+
 class StrictUuidField(StrictCharField):
     def to_internal_value(self, data):
         if isinstance(data, UUID):
@@ -108,12 +132,14 @@ class SongSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
     playable = serializers.SerializerMethodField()
     stream_url = serializers.SerializerMethodField()
+    current_rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Song
         fields = [
             "id", "title", "artist", "album", "duration_ms", "tags", "playable",
             "stream_url", "attribution_text", "source_url", "license_name", "license_url",
+            "current_rating",
         ]
         read_only_fields = fields
 
@@ -131,6 +157,17 @@ class SongSerializer(serializers.ModelSerializer):
 
     def _is_playable(self, song):
         return playable_media_path(song) is not None
+
+    def get_current_rating(self, song):
+        request = self.context.get("request")
+        if request is None or not request.user.is_authenticated:
+            return None
+        return Rating.objects.filter(user=request.user, song=song).values_list("score", flat=True).first()
+
+
+class HistoryItemSerializer(serializers.Serializer):
+    song = SongSerializer(source="*", read_only=True)
+    last_played_at = serializers.DateTimeField(read_only=True)
 
 
 class PlaylistSerializer(serializers.ModelSerializer):

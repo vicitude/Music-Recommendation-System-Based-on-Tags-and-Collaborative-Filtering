@@ -12,14 +12,14 @@ let serial = 0
 globalThis.__pageMocks = new Map()
 const renderer = createRenderer({ createElement: () => ({}), createText: () => ({}), createComment: () => ({}), insert() {}, remove() {}, setText() {}, setElementText() {}, parentNode: () => null, nextSibling: () => null, patchProp() {} })
 export const flush = async () => { await new Promise(resolve => setImmediate(resolve)); await nextTick() }
-export async function mountPage(filename, request, path = '/daily', props = {}) {
+export async function mountPage(filename, request, path = '/daily', props = {}, options = {}) {
   const id = ++serial, calls = [], routes = []
-  const state = { calls, routes, user: ref({ id: 1, onboarding_completed: false }), notice: ref(''), async request(...args) { calls.push(args); return request(...args) }, currentPath: () => path }
+  const state = { calls, routes, user: ref(options.user === undefined ? { id: 1, onboarding_completed: false } : options.user), ready: ref(options.ready ?? false), notice: ref(''), async request(...args) { if (filename === 'components/SongList.vue' && args[0].startsWith('/api/v1/favorites/?') && !options.loadFavorites) return { count: 0, page: 1, page_size: 100, results: [] }; calls.push(args); return request(...args) }, currentPath: () => path }
   globalThis.__pageMocks.set(id, state)
   const access = 'globalThis.__pageMocks.get(' + id + ')'
-  const client = asUrl('export class ApiError extends Error { constructor(code, retryAfter=0) { super(code); this.body={error_code:code}; this.retryAfter=retryAfter } }; export const request=(...args)=>' + access + '.request(...args)')
-  const session = asUrl('export const user=' + access + '.user; export const notice=' + access + '.notice; export const message=error=>error.message || "failure"')
-  const router = asUrl('export const currentPath=()=>' + access + '.currentPath(); export const navigate=path=>' + access + '.routes.push(path)')
+  const client = asUrl('export class ApiError extends Error { constructor(body, retryAfter=0) { const resolved=typeof body === "string" ? {error_code:body,message:body,details:[],request_id:""} : body; super(resolved.message); this.name="ApiError"; this.body=resolved; this.retryAfter=retryAfter } }; export const configureClient=()=>{}; export const request=(...args)=>' + access + '.request(...args)')
+  const session = asUrl('export const initialize=async()=>{}; export const ready=' + access + '.ready; export const user=' + access + '.user; export const notice=' + access + '.notice; export const message=error=>error.message || "failure"')
+  const router = asUrl('export const routeName=()=>{const path=' + access + '.currentPath(); return /^\\/users\\/\\d+$/.test(path) ? "user" : /^\\/users\\/\\d+\\/(following|followers)$/.test(path) ? "user-connections" : path.slice(1)}; export const currentPath=()=>' + access + '.currentPath(); export const navigate=path=>' + access + '.routes.push(path)')
   const player = asUrl('export const playerKey=Symbol("test-player")')
   const stub = asUrl('export default {}')
   const mapImport = source => source === 'vue' ? vueUrl : source.endsWith('/api/client') ? client : source.endsWith('/session') ? session : source.endsWith('/router') ? router : source.endsWith('/player-context') ? player : source.endsWith('.vue') ? stub : null
@@ -37,5 +37,5 @@ export async function mountPage(filename, request, path = '/daily', props = {}) 
   app.provide((await import(player)).playerKey, playerMock)
   const proxy = app.mount({})
   await flush()
-  return { ...state, vm: proxy.$.setupState, ApiError: (await import(client)).ApiError, close() { app.unmount(); globalThis.__pageMocks.delete(id) } }
+  return { ...state, vm: proxy.$.setupState, ApiError: (await import(client)).ApiError, async setProps(props) { Object.assign(proxy.$.props, props); await flush() }, close() { app.unmount(); globalThis.__pageMocks.delete(id) } }
 }

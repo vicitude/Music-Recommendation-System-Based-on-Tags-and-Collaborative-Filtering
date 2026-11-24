@@ -169,14 +169,21 @@ class DailyTests(TestCase):
         self.assert_error(response, 415, "VALIDATION_ERROR")
         self.assert_error(self.client.get("/api/v1/recommendations/daily/refresh/"), 405, "VALIDATION_ERROR")
 
-    def test_new_favorite_is_filtered_without_rewriting_snapshot(self):
+    def test_new_favorite_is_retained_without_rewriting_snapshot(self):
         self.get_daily()
         original = RecommendationSnapshot.objects.values().get()
         self.favorite(self.songs[0], when=self.now + timedelta(seconds=1))
         response = self.get_daily(self.now + timedelta(seconds=2))
-        self.assertNotIn(self.songs[0].id, [item["song_id"] for item in response.json()["items"]])
-        self.assertEqual([item["rank"] for item in response.json()["items"]], [1, 2, 3, 4])
+        self.assertIn(self.songs[0].id, [item["song_id"] for item in response.json()["items"]])
+        self.assertEqual([item["rank"] for item in response.json()["items"]], [1, 2, 3, 4, 5])
         self.assertEqual(original, RecommendationSnapshot.objects.values().get())
+
+    def test_refresh_excludes_favorite_retained_in_existing_snapshot(self):
+        self.get_daily()
+        self.favorite(self.songs[0], when=self.now + timedelta(seconds=1))
+        response = self.refresh(self.now + timedelta(seconds=61))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(self.songs[0].id, [item["song_id"] for item in response.json()["items"]])
 
     def test_new_recent_complete_is_filtered_but_play_is_not(self):
         self.get_daily()
@@ -272,7 +279,7 @@ class DailyTests(TestCase):
         response = self.get_daily()
         self.assertEqual(response.json()["alpha_effective"], 0.0)
         item = response.json()["items"][0]
-        self.assertEqual(item["source"], "CF")
+        self.assertEqual(item["source"], "USER_CF")
         self.assertEqual(item["evidence"], {"tag_ids": [], "neighbor_count": 1})
         self.assert_schema(response)
 
@@ -348,7 +355,10 @@ class DailyTests(TestCase):
         self.favorite(self.songs[2], user=self.neighbor, when=self.now)
         self.behavior(self.songs[3], kind=Behavior.COMPLETE, origin="SIMULATED")
         response = self.get_daily()
-        self.assertEqual(response.json()["alpha_effective"], 1.0)
+        self.assertEqual(response.json()["alpha_effective"], response.json()["alpha_target"])
+        for item in response.json()["items"]:
+            self.assertEqual(item["user_cf_score"], 0)
+            self.assertEqual(item["item_cf_score"], 0)
         self.assertIn(self.songs[3].id, [item["song_id"] for item in response.json()["items"]])
         self.favorite(self.songs[4], user=self.neighbor)
         User.objects.filter(id=self.neighbor.id).update(is_active=False)
@@ -449,3 +459,23 @@ class DailyTests(TestCase):
         self.assert_error(response, 429, "RATE_LIMITED")
         self.assertEqual(response["Retry-After"], "60")
         self.assertEqual(RecommendationSnapshot.objects.get().generated_at, self.now)
+
+    def test_daily_generation_and_legacy_snapshot_return_at_most_ten(self):
+        for number in range(20):
+            song = Song.objects.create(title=f"Extra {number}", artist="TEST_ONLY", duration_ms=1000, mime="audio/wav", file_path=f"songs/extra-{number}.wav", active=True, playback_allowed=True, checked_at=self.past)
+            Song.objects.filter(pk=song.pk).update(created_at=self.past)
+        self.assertEqual(len(daily.calculate_daily(user_id=self.user.pk, now=self.now)), 10)
+        response = self.get_daily()
+        self.assertEqual(len(response.json()["items"]), 10)
+        snapshot = RecommendationSnapshot.objects.get()
+        self.assertEqual(len(snapshot.items), 10)
+        legacy = daily.recommend(**daily.load_inputs(user_id=self.user.pk, cutoff=self.now), limit=20).items
+        snapshot.items = legacy
+        snapshot.save(update_fields=["items"])
+        Song.objects.filter(pk=legacy[0]["song_id"]).update(active=False)
+        result = self.get_daily().json()["items"]
+        self.assertEqual(len(result), 10)
+        self.assertEqual(result[0]["song_id"], legacy[1]["song_id"])
+        self.assertEqual([item["rank"] for item in result], list(range(1, 11)))
+        snapshot.refresh_from_db()
+        self.assertEqual(len(snapshot.items), 20)

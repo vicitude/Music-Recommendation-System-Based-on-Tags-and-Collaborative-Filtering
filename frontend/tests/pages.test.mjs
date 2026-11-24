@@ -59,6 +59,16 @@ test('song detail rejects dangerous source links', async () => {
   const state = await mountPage('pages/SongPage.vue', async () => ({ id: 5 }), '/songs/5')
   try { assert.equal(state.vm.safeLink('javascript:alert(1)'), undefined); assert.equal(state.vm.safeLink('file:///private'), undefined); assert.equal(state.vm.safeLink('https://example.com/license'), 'https://example.com/license'); assert.equal(state.calls[0][0], '/api/v1/songs/5/') } finally { state.close() }
 })
+test('song list rating writes score and updates the current song without favorite reload', async () => {
+  const state = await mountPage('components/SongList.vue', async () => ({ score: 4 }), '/discover')
+  try {
+    const track = { id: 3, title: 'track', current_rating: null }
+    await state.vm.rate(track, 4)
+    assert.deepEqual(state.calls.map(([path, init]) => [path, init?.method || 'GET']), [['/api/v1/songs/3/rating/', 'PUT']])
+    assert.equal(state.vm.rating(track), 4)
+    assert.match(state.vm.feedback, /评分已保存/)
+  } finally { state.close() }
+})
 test('login posts credentials then routes incomplete user to interests', async () => {
   const state = await mountPage('pages/LoginPage.vue', async () => ({ id: 7, onboarding_completed: false }))
   try { state.vm.username = 'tester'; state.vm.password = 'test-password'; await state.vm.submit(); assert.equal(state.calls[0][0], '/api/v1/auth/login/'); assert.equal(state.vm.password, ''); assert.deepEqual(state.routes, ['/onboarding']) } finally { state.close() }
@@ -66,6 +76,96 @@ test('login posts credentials then routes incomplete user to interests', async (
 test('registration password mismatch sends no request', async () => {
   const state = await mountPage('pages/RegisterPage.vue', async () => ({}))
   try { state.vm.password = 'test-password'; state.vm.confirm = 'mismatch'; await state.vm.submit(); assert.equal(state.calls.length, 0); assert.ok(state.vm.error) } finally { state.close() }
+})
+test('song list offsets page indices but retains explicit recommendation ranks', async () => {
+  const state = await mountPage('components/SongList.vue', async () => ({}), '/discover', { indexOffset: 20, ranks: { 9: 3 } })
+  try {
+    assert.equal(state.vm.rank({ id: 1 }, 0), '21')
+    assert.equal(state.vm.rank({ id: 2 }, 19), '40')
+    assert.equal(state.vm.rank({ id: 9 }, 0), '03')
+  } finally { state.close() }
+})
+test('favorite heart hydrates persisted state and toggles only after successful writes', async () => {
+  let reject = false
+  const state = await mountPage('components/SongList.vue', async (path, init) => {
+    if (path.includes('?')) return { count: 1, page: 1, page_size: 100, results: [{ id: 3 }] }
+    if (reject) throw Error('write rejected')
+  }, '/daily', {}, { loadFavorites: true })
+  try {
+    assert.equal(state.vm.isFavorite({ id: 3 }), true)
+    await state.vm.action({ id: 3 }, 'favorite')
+    assert.equal(state.calls.at(-1)[1].method, 'DELETE')
+    assert.equal(state.vm.isFavorite({ id: 3 }), false)
+    await state.vm.action({ id: 3 }, 'favorite')
+    assert.equal(state.vm.isFavorite({ id: 3 }), true)
+    assert.equal(state.calls.at(-1)[1].method, 'PUT')
+    reject = true; await state.vm.action({ id: 3 }, 'favorite')
+    assert.equal(state.vm.isFavorite({ id: 3 }), true)
+    assert.match(state.vm.feedback, /write rejected/)
+  } finally { state.close() }
+})
+test('favorite state reads all pages and resets after account change', async () => {
+  const state = await mountPage('components/SongList.vue', async path => {
+    const page = Number(new URL(path, 'http://localhost').searchParams.get('page'))
+    return { count: 101, page, page_size: 100, results: [{ id: page === 1 ? 3 : 9 }] }
+  }, '/discover', {}, { loadFavorites: true })
+  try {
+    assert.equal(state.vm.isFavorite({ id: 9 }), true)
+    assert.equal(state.calls.length, 2)
+    state.user.value = null; await flush()
+    assert.equal(state.vm.isFavorite({ id: 9 }), false)
+  } finally { state.close() }
+})
+test('favorite status load failure can retry without writing a favorite', async () => {
+  let fail = true
+  const state = await mountPage('components/SongList.vue', async () => {
+    if (fail) throw Error('status unavailable')
+    return { count: 0, page: 1, page_size: 100, results: [] }
+  }, '/daily', {}, { loadFavorites: true })
+  try {
+    assert.equal(state.vm.favoritesReady, false)
+    await state.vm.action({ id: 3 }, 'favorite'); assert.equal(state.calls.length, 1)
+    fail = false; await state.vm.loadFavorites()
+    assert.equal(state.vm.favoritesReady, true)
+    assert.equal(state.vm.favoritesError, '')
+  } finally { state.close() }
+})
+test('registration validates username length and numeric passwords locally', async () => {
+  const state = await mountPage('pages/RegisterPage.vue', async () => ({}))
+  try {
+    state.vm.username = '中文'; state.vm.password = state.vm.confirm = 'test-only-value'
+    await state.vm.submit(); assert.match(state.vm.error, /用户名/)
+    state.vm.username = 'new_listener'; state.vm.password = state.vm.confirm = 'short'
+    await state.vm.submit(); assert.match(state.vm.error, /10—128/)
+    state.vm.password = state.vm.confirm = '123456789012'
+    await state.vm.submit(); assert.match(state.vm.error, /不能只包含数字/)
+    assert.equal(state.calls.length, 0)
+  } finally { state.close() }
+})
+test('registration explains server password and username failures', async () => {
+  let Failure, code = 'VALIDATION_ERROR', details = ['password']
+  const state = await mountPage('pages/RegisterPage.vue', async () => {
+    const error = new Failure(code); error.body.details = details; throw error
+  })
+  try {
+    Failure = state.ApiError
+    state.vm.username = 'new_listener'; state.vm.password = state.vm.confirm = 'test-only-value'
+    await state.vm.submit(); assert.match(state.vm.error, /密码未通过安全检查/)
+    assert.equal(state.vm.password, 'test-only-value')
+    details = ['username']; await state.vm.submit(); assert.match(state.vm.error, /用户名须为/)
+    code = 'USERNAME_TAKEN'; await state.vm.submit(); assert.match(state.vm.error, /已被使用/)
+    assert.equal(state.routes.length, 0)
+  } finally { state.close() }
+})
+test('registration success preserves password whitespace and routes to login', async () => {
+  const state = await mountPage('pages/RegisterPage.vue', async () => ({ id: 7 }))
+  try {
+    state.vm.username = '  New_Listener  '; state.vm.password = state.vm.confirm = 'test-only-value '
+    await state.vm.submit()
+    assert.deepEqual(JSON.parse(state.calls[0][1].body), { username: 'New_Listener', password: 'test-only-value ' })
+    assert.equal(state.vm.password, ''); assert.equal(state.vm.confirm, '')
+    assert.deepEqual(state.routes, ['/login'])
+  } finally { state.close() }
 })
 test('favorites recovers when last page disappears after removal', async () => {
   let missing = false, Failure

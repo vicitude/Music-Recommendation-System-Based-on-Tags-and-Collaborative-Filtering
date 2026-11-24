@@ -23,3 +23,6 @@
 获批后的命令设计：先makemigrations --check检查已提交迁移与模型差异，migrate --plan查看计划，经用户批准后对专用空库执行migrate，再运行测试。真实命令只有对应应用与账户存在时才能报告运行；本轮没有这些入口。
 
 验收ID DB-M-001：所有业务表、唯一键、索引、NULL与FK映射符合机器计划。DB-M-002：在专用测试库清空业务表后完整迁移并回滚再迁移，应用表结构一致。DB-M-003：取消或失败事务不留下部分关系。三项均未自动化，期限T02/T04完成前；不针对现有用户数据演练回滚。
+# 轻量关注补充（隔离实施）
+
+0005_follow依赖0004_comment，仅CreateModel Follow/music_follow；source/target到User CASCADE只作用新关系，不改旧Comment PROTECT。有向唯一uq_follow_source_target，ck_follow_not_self禁止自关注；双向source/target,-created_at,-id索引。无真实库迁移授权。

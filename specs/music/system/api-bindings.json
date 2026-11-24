@@ -3,6 +3,129 @@
   "status": "PARTIALLY_IMPLEMENTED",
   "bindings": [
     {
+      "operation_id": "listComments",
+      "method": "GET",
+      "path": "/api/v1/songs/{id}/comments/",
+      "module": "backend/music/api/views.py",
+      "signature": "listComments(request: Request, id: int) -> Response",
+      "auth": "PUBLIC",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "createComment",
+      "method": "POST",
+      "path": "/api/v1/songs/{id}/comments/",
+      "module": "backend/music/api/views.py",
+      "signature": "createComment(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": "CommentWrite",
+      "responses": [
+        "201",
+        "400",
+        "401",
+        "403",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "deleteComment",
+      "method": "DELETE",
+      "path": "/api/v1/comments/{id}/",
+      "module": "backend/music/api/views.py",
+      "signature": "deleteComment(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": null,
+      "responses": [
+        "204",
+        "400",
+        "401",
+        "403",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "getHistory",
+      "method": "GET",
+      "path": "/api/v1/me/history/",
+      "module": "backend/music/api/views.py",
+      "signature": "getHistory(request: Request) -> Response",
+      "auth": "SESSION",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "getRating",
+      "method": "GET",
+      "path": "/api/v1/songs/{id}/rating/",
+      "module": "backend/music/api/views.py",
+      "signature": "getRating(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "setRating",
+      "method": "PUT",
+      "path": "/api/v1/songs/{id}/rating/",
+      "module": "backend/music/api/views.py",
+      "signature": "setRating(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": "RatingWrite",
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "403",
+        "404",
+        "409",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "removeRating",
+      "method": "DELETE",
+      "path": "/api/v1/songs/{id}/rating/",
+      "module": "backend/music/api/views.py",
+      "signature": "removeRating(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": null,
+      "responses": [
+        "204",
+        "400",
+        "401",
+        "403",
+        "404",
+        "500"
+      ]
+    },
+    {
       "operation_id": "getCsrf",
       "method": "GET",
       "path": "/api/v1/auth/csrf/",
@@ -413,6 +536,95 @@
         "401",
         "403",
         "429",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "getUser",
+      "method": "GET",
+      "path": "/api/v1/users/{id}/",
+      "module": "backend/music/api/views.py",
+      "signature": "getUser(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "listFollowing",
+      "method": "GET",
+      "path": "/api/v1/users/{id}/following/",
+      "module": "backend/music/api/views.py",
+      "signature": "listFollowing(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "listFollowers",
+      "method": "GET",
+      "path": "/api/v1/users/{id}/followers/",
+      "module": "backend/music/api/views.py",
+      "signature": "listFollowers(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": false,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "404",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "followUser",
+      "method": "PUT",
+      "path": "/api/v1/users/{id}/follow/",
+      "module": "backend/music/api/views.py",
+      "signature": "followUser(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "403",
+        "404",
+        "415",
+        "500"
+      ]
+    },
+    {
+      "operation_id": "unfollowUser",
+      "method": "DELETE",
+      "path": "/api/v1/users/{id}/follow/",
+      "module": "backend/music/api/views.py",
+      "signature": "unfollowUser(request: Request, id: int) -> Response",
+      "auth": "SESSION",
+      "csrf": true,
+      "request_schema": null,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "403",
+        "404",
+        "415",
         "500"
       ]
     }

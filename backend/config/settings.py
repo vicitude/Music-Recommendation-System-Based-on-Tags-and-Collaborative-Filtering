@@ -2,6 +2,9 @@ from pathlib import Path
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+LOCAL_IMPORT_FFMPEG = os.environ.get("LOCAL_IMPORT_FFMPEG", "")
+LOCAL_IMPORT_CLAP_HOME = Path(os.environ.get("LOCAL_IMPORT_CLAP_HOME", BASE_DIR.parent / "local-ai"))
+LOCAL_IMPORT_CLAP_PYTHON = Path(os.environ.get("LOCAL_IMPORT_CLAP_PYTHON", Path.home() / "AppData/Local/MusicRecommenderAI/clap-venv/Scripts/python.exe"))
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "development-only-change-me")
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
@@ -79,6 +82,8 @@ MEDIA_URL = "/media/"
 CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_AGE = 14 * 24 * 60 * 60
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 CSRF_COOKIE_SAMESITE = "Lax"
 CSRF_FAILURE_VIEW = "music.api.errors.csrf_failure"
 REST_FRAMEWORK = {

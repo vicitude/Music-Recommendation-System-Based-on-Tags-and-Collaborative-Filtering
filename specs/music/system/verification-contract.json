@@ -2,7 +2,7 @@
   "spec": "SPEC-MUSIC-001",
   "version": "v0.1.0",
   "sections": 10,
-  "operation_count": 24,
+  "operation_count": 36,
   "scenarios": [
     "TC-M-001",
     "TC-M-002",
@@ -92,5 +92,6 @@
     "简单实现",
     "简化版",
     "最小版"
-  ]
+  ],
+  "frontend_page_count": 12
 }

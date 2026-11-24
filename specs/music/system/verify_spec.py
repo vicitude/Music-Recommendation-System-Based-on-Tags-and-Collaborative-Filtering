@@ -102,7 +102,7 @@ def check_documents():
     ensure(len(errors["errors"]) == 13, "error catalog count mismatch")
     ensure(all(entry["message"] for entry in errors["errors"].values()), "empty error message")
     frontend_contract = read_json(SPEC_ROOT / "frontend-contract.json")
-    ensure(len(frontend_contract["pages"]) == 9, "frontend page count mismatch")
+    ensure(len(frontend_contract["pages"]) == contract["frontend_page_count"], "frontend page count mismatch")
     operation_ids = {operation["operationId"] for methods in api_document["paths"].values() for operation in methods.values()}
     for page in frontend_contract["pages"]:
         ensure(page["path"].startswith("/"), "invalid page path")

@@ -11,6 +11,313 @@
     }
   ],
   "paths": {
+    "/api/v1/songs/{id}/comments/": {
+      "get": {
+        "operationId": "listComments",
+        "security": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "description": "公开，仅active歌曲；created_at DESC、id DESC，固定20条，仅允许单值page。空集第一页成功，越界404。作者不按origin或is_active过滤，仅公开id/username；can_delete仅当前登录active本人为true。不写行为、评分或推荐。"
+      },
+      "post": {
+        "operationId": "createComment",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentWrite"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthRequired"
+          },
+          "403": {
+            "$ref": "#/components/responses/CsrfFailed"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "description": "active登录用户且CSRF；仅active歌曲。拒绝未知字段、非字符串、trim后空或超过500字符。保留内部换行；不写行为、评分或推荐快照。"
+      }
+    },
+    "/api/v1/comments/{id}/": {
+      "delete": {
+        "operationId": "deleteComment",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "成功"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthRequired"
+          },
+          "403": {
+            "$ref": "#/components/responses/CsrfFailed"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "description": "active登录本人且CSRF；管理员也不能通过API删除他人评论。他人、重复、缺失或下架歌曲均404；成功204无响应体。"
+      }
+    },
+    "/api/v1/me/history/": {
+      "get": {
+        "operationId": "getHistory",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "错误码见规格第6部分",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "description": "只读返回当前认证用户已接受并持久化的 PLAY 历史；仅 active=true 歌曲，按歌曲取 MAX(occurred_at)，按 last_played_at 降序、song.id 升序。仅允许单值 page，默认 1；每页固定 20，拒绝 page_size 和其他未知参数。空集第一页返回空 items，越界页返回 404；不写行为或刷新推荐。"
+      }
+    },
     "/api/v1/auth/csrf/": {
       "get": {
         "operationId": "getCsrf",
@@ -1265,6 +1572,193 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v1/songs/{id}/rating/": {
+      "get": {
+        "operationId": "getRating",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RatingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthRequired"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      },
+      "put": {
+        "operationId": "setRating",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RatingWrite"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "headers": {
+              "X-Spec-Version": {
+                "schema": {
+                  "type": "string",
+                  "const": "v0.1.0"
+                }
+              },
+              "X-Request-ID": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RatingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthRequired"
+          },
+          "403": {
+            "$ref": "#/components/responses/CsrfFailed"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removeRating",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "无响应体"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthRequired"
+          },
+          "403": {
+            "$ref": "#/components/responses/CsrfFailed"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
           }
         }
       }
@@ -3703,9 +4197,303 @@
           }
         }
       }
+    },
+    "/api/v1/users/{id}/": {
+      "get": {
+        "operationId": "getUser",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功；private,no-store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSummary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthRequired"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "description": "活跃会话和目标；双端活跃关系；拒绝未知/重复query及body。写入JSON无body附CSRF；自关注400 details=[id]，重复幂等200。成功和错误private,no-store。"
+      }
+    },
+    "/api/v1/users/{id}/following/": {
+      "get": {
+        "operationId": "listFollowing",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功；private,no-store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRelationPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthRequired"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "description": "活跃会话和目标；双端活跃关系；拒绝未知/重复query及body。写入JSON无body附CSRF；自关注400 details=[id]，重复幂等200。成功和错误private,no-store。"
+      }
+    },
+    "/api/v1/users/{id}/followers/": {
+      "get": {
+        "operationId": "listFollowers",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功；private,no-store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRelationPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthRequired"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "description": "活跃会话和目标；双端活跃关系；拒绝未知/重复query及body。写入JSON无body附CSRF；自关注400 details=[id]，重复幂等200。成功和错误private,no-store。"
+      }
+    },
+    "/api/v1/users/{id}/follow/": {
+      "put": {
+        "operationId": "followUser",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功；private,no-store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSummary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthRequired"
+          },
+          "403": {
+            "$ref": "#/components/responses/CsrfFailed"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "415": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "description": "活跃会话和目标；双端活跃关系；拒绝未知/重复query及body。写入JSON无body附CSRF；自关注400 details=[id]，重复幂等200。成功和错误private,no-store。"
+      },
+      "delete": {
+        "operationId": "unfollowUser",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "X-CSRFToken",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功；private,no-store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSummary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AuthRequired"
+          },
+          "403": {
+            "$ref": "#/components/responses/CsrfFailed"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "415": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "description": "活跃会话和目标；双端活跃关系；拒绝未知/重复query及body。写入JSON无body附CSRF；自关注400 details=[id]，重复幂等200。成功和错误private,no-store。"
+      }
     }
   },
   "components": {
+    "responses": {
+      "ValidationError": {
+        "description": "错误码见规格第6部分"
+      },
+      "AuthRequired": {
+        "description": "错误码见规格第6部分"
+      },
+      "CsrfFailed": {
+        "description": "错误码见规格第6部分"
+      },
+      "NotFound": {
+        "description": "错误码见规格第6部分"
+      },
+      "Conflict": {
+        "description": "错误码见规格第6部分"
+      },
+      "InternalError": {
+        "description": "错误码见规格第6部分"
+      }
+    },
     "securitySchemes": {
       "sessionAuth": {
         "type": "apiKey",
@@ -3714,6 +4502,148 @@
       }
     },
     "schemas": {
+      "CommentItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "song_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "author": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "username": {
+                "type": "string",
+                "maxLength": 30
+              }
+            },
+            "required": [
+              "id",
+              "username"
+            ],
+            "additionalProperties": false
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "can_delete": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "song_id",
+          "author",
+          "content",
+          "created_at",
+          "can_delete"
+        ],
+        "additionalProperties": false
+      },
+      "CommentWrite": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "必须为字符串；trim后1—500字符，保留内部换行。"
+          }
+        },
+        "required": [
+          "content"
+        ],
+        "additionalProperties": false
+      },
+      "CommentPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/CommentItem"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "const": 20
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "additionalProperties": false
+      },
+      "HistoryPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "song": {
+                  "$ref": "#/components/schemas/Song"
+                },
+                "last_played_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "song",
+                "last_played_at"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "const": 20
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "additionalProperties": false
+      },
       "Error": {
         "type": "object",
         "properties": {
@@ -3849,6 +4779,9 @@
             "enum": [
               "CONTENT",
               "CF",
+              "USER_CF",
+              "ITEM_CF",
+              "NCF",
               "HYBRID",
               "HOT"
             ]
@@ -3859,6 +4792,21 @@
             "maximum": 1
           },
           "cf_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "user_cf_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "item_cf_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "ncf_score": {
             "type": "number",
             "minimum": 0,
             "maximum": 1
@@ -3883,6 +4831,9 @@
           "source",
           "content_score",
           "cf_score",
+          "user_cf_score",
+          "item_cf_score",
+          "ncf_score",
           "score",
           "explanation",
           "evidence"
@@ -3915,6 +4866,14 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 86400000
+          },
+          "current_rating": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 5
           },
           "tags": {
             "type": "array",
@@ -3956,6 +4915,7 @@
           "artist",
           "album",
           "duration_ms",
+          "current_rating",
           "tags",
           "playable",
           "stream_url",
@@ -3963,6 +4923,37 @@
           "source_url",
           "license_name",
           "license_url"
+        ],
+        "additionalProperties": false
+      },
+      "RatingWrite": {
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          }
+        },
+        "required": [
+          "score"
+        ],
+        "additionalProperties": false
+      },
+      "RatingResponse": {
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 5
+          }
+        },
+        "required": [
+          "score"
         ],
         "additionalProperties": false
       },
@@ -4241,6 +5232,56 @@
               "NO_ELIGIBLE_SONGS",
               "FILTERED_OUT"
             ]
+          },
+          "route_weights": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "scene_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
+          },
+          "scene_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "scene_source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              null,
+              "USER",
+              "TIME"
+            ]
+          },
+          "scene_match_rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "time_context": {
+            "type": "string",
+            "enum": [
+              "凌晨",
+              "清晨",
+              "上午",
+              "午间",
+              "下午",
+              "傍晚",
+              "夜晚",
+              "深夜"
+            ]
           }
         },
         "required": [
@@ -4252,7 +5293,13 @@
           "alpha_effective",
           "next_refresh_at",
           "items",
-          "empty_reason"
+          "empty_reason",
+          "route_weights",
+          "scene_id",
+          "scene_name",
+          "scene_source",
+          "scene_match_rate",
+          "time_context"
         ],
         "additionalProperties": false
       },
@@ -4276,6 +5323,99 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Song"
+            }
+          }
+        },
+        "required": [
+          "count",
+          "page",
+          "page_size",
+          "results"
+        ],
+        "additionalProperties": false
+      },
+      "UserSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "username": {
+            "type": "string",
+            "maxLength": 30
+          },
+          "is_following": {
+            "type": "boolean"
+          },
+          "is_self": {
+            "type": "boolean"
+          },
+          "following_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "follower_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "is_following",
+          "is_self",
+          "following_count",
+          "follower_count"
+        ],
+        "additionalProperties": false
+      },
+      "UserRelationItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "username": {
+            "type": "string",
+            "maxLength": 30
+          },
+          "is_following": {
+            "type": "boolean"
+          },
+          "is_self": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "is_following",
+          "is_self"
+        ],
+        "additionalProperties": false
+      },
+      "UserRelationPage": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "const": 20
+          },
+          "results": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/UserRelationItem"
             }
           }
         },

@@ -62,9 +62,13 @@ class MediaTests(TestCase):
             "source_url": "https://example.org/source", "license_name": "TEST_ONLY",
             "license_url": "https://example.org/license", "attribution_text": "",
             "checked_at": timezone.now() - timedelta(minutes=1), "playback_allowed": True,
-            "redistribution_allowed": False, "rights_confirmed": True, "preview_confirmed": False,
+            "redistribution_allowed": False, "rights_confirmed": True, "_publish": "1",
         }
-        return {**data, **changes}
+        data.update(changes)
+        if changes.get("active") is False:
+            data.pop("_publish", None)
+            data["_unpublish"] = "1"
+        return data
 
     def upload_form(self, *, content=None, filename="test.wav", instance=None, **changes):
         upload = SimpleUploadedFile(filename, self.audio if content is None else content, content_type="application/octet-stream")
@@ -179,20 +183,20 @@ class MediaTests(TestCase):
         response.close()
         self.assertTrue(audio.closed)
 
-    def test_valid_wav_publish_form_requires_explicit_human_rights(self):
+    def test_valid_wav_publish_form_requires_no_source_license_inputs(self):
         form = self.upload_form()
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.audio_data, self.audio)
-        form = self.upload_form(rights_confirmed=False)
-        self.assertFalse(form.is_valid())
-        self.assertIn("active", form.errors)
+        form = self.upload_form(source_name="", source_url="", license_name="", license_url="", rights_confirmed=False)
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertNotIn("rights_confirmed", form.fields)
 
     def test_pt_m_009_all_publish_guard_combinations(self):
-        for has_file, rights, playback, checked, duration in itertools.product([False, True], repeat=5):
-            data = self.form_data(rights_confirmed=rights, playback_allowed=playback, checked_at=timezone.now() if checked else None, duration_ms=1000 if duration else 0)
+        for has_file, duration in itertools.product([False, True], repeat=2):
+            data = self.form_data(duration_ms=1000 if duration else 0)
             files = {"upload": SimpleUploadedFile("test.wav", self.audio)} if has_file else None
             form = SongAdminForm(data=data, files=files)
-            self.assertEqual(form.is_valid(), all([has_file, rights, playback, checked, duration]), (has_file, rights, playback, checked, duration, form.errors))
+            self.assertEqual(form.is_valid(), all([has_file, duration]), (has_file, duration, form.errors))
 
     def test_draft_can_save_without_file_but_cannot_publish(self):
         form = SongAdminForm(data=self.form_data(active=False, checked_at=None, rights_confirmed=False, playback_allowed=False))
@@ -216,26 +220,28 @@ class MediaTests(TestCase):
         self.assertFalse(self.upload_form(duration_ms=2001).is_valid())
         self.assertTrue(self.upload_form(duration_ms=2000).is_valid())
 
-    def test_tc_m_018_mp3_and_ogg_require_draft_then_preview(self):
+    def test_tc_m_018_mp3_and_ogg_publish_in_one_submission(self):
         samples = [(b"\xff\xfb\x90\x00", "sample.mp3", "audio/mpeg"), (b"OggS" + bytes([0, 2]) + b"\x00" * 20 + bytes([1, 3]) + b"abc", "sample.ogg", "audio/ogg")]
         for content, name, mime in samples:
-            self.assertFalse(self.upload_form(content=content, filename=name, mime=mime, preview_confirmed=True).is_valid())
+            self.assertTrue(self.upload_form(content=content, filename=name, mime=mime).is_valid())
             form = self.upload_form(content=content, filename=name, mime=mime, active=False)
             self.assertTrue(form.is_valid(), form.errors)
-            self.assertIsNone(form.cleaned_data["checked_at"])
+            self.assertFalse(form.will_publish)
             song = Song.objects.get(id=self.song.id)
             song.file_path = "songs/" + name
             song.mime = mime
             with patch("pathlib.Path.is_file", return_value=True), patch("pathlib.Path.open", side_effect=lambda *args, **kwargs: io.BytesIO(content)):
                 form = SongAdminForm(data=self.form_data(mime=mime), instance=song)
-                self.assertFalse(form.is_valid())
-                form = SongAdminForm(data=self.form_data(mime=mime, preview_confirmed=True), instance=song)
                 self.assertTrue(form.is_valid(), form.errors)
 
-    def test_form_rejects_future_verification_and_non_http_sources(self):
-        self.assertFalse(self.upload_form(checked_at=timezone.now() + timedelta(hours=1)).is_valid())
+    def test_form_rejects_future_verification_and_ignores_removed_inputs(self):
+        form = self.upload_form(checked_at=timezone.now() + timedelta(hours=1))
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertNotIn("checked_at", form.fields)
         for field in ["source_url", "license_url"]:
-            self.assertFalse(self.upload_form(**{field: "ftp://example.org/file"}).is_valid())
+            form = self.upload_form(**{field: "ftp://example.org/file"})
+            self.assertTrue(form.is_valid(), form.errors)
+            self.assertNotIn(field, form.cleaned_data)
 
     def test_file_path_post_cannot_override_existing_storage(self):
         song = Song.objects.get(id=self.song.id)
@@ -311,12 +317,12 @@ class MediaTests(TestCase):
             response.close()
         self.assertIn("audio controls", str(self.admin.preview(self.song)))
 
-    def test_tag_admin_trims_names_and_disallows_deletion(self):
+    def test_tag_admin_trims_names_and_allows_authorized_deletion(self):
         form = TagAdminForm(data={"name": " 治愈 ", "kind": "MOOD", "active": True})
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.cleaned_data["name"], "治愈")
         self.assertFalse(TagAdminForm(data={"name": " ", "kind": "MOOD"}).is_valid())
-        self.assertFalse(TagAdmin(Tag, AdminSite()).has_delete_permission(self.request))
+        self.assertTrue(TagAdmin(Tag, AdminSite()).has_delete_permission(self.request))
 
     def test_admin_add_and_change_pages_render_safe_fields(self):
         self.client.force_login(self.staff)
@@ -325,14 +331,61 @@ class MediaTests(TestCase):
             self.assertEqual(response.status_code, 200, url)
         response = self.client.get(f"/admin/music/song/{self.song.id}/change/")
         self.assertContains(response, 'type="file"')
-        self.assertContains(response, "rights_confirmed")
-        self.assertContains(response, "preview_confirmed")
+        self.assertNotContains(response, "rights_confirmed")
+        self.assertNotContains(response, "来源与许可")
+        for name in ("source_name", "source_url", "license_name", "license_url", "attribution_text", "redistribution_allowed"):
+            self.assertNotContains(response, f'name="{name}"')
+        self.assertContains(response, 'name="_publish"')
+        self.assertNotContains(response, 'name="preview_confirmed"')
         self.assertNotContains(response, 'name="file_path"')
 
     def test_admin_preview_route_rejects_non_staff(self):
         response = self.client.get(f"/admin/music/song/{self.song.id}/preview/")
         self.assertEqual(response.status_code, 302)
         self.assertEqual(self.client.get("/media/songs/synthetic.wav").status_code, 404)
+
+    def test_removed_source_inputs_preserve_existing_values_even_when_posted(self):
+        song = Song.objects.get(pk=self.song.pk)
+        fields = ("source_name", "source_url", "license_name", "license_url", "attribution_text", "redistribution_allowed")
+        before = {name: getattr(song, name) for name in fields}
+        form = SongAdminForm(data=self.form_data(active=False, **{name: "forged" for name in fields}), instance=song)
+        with patch("music.forms.controlled_media_path", return_value=Path("synthetic.wav")):
+            self.assertTrue(form.is_valid(), form.errors)
+            form.save()
+        song.refresh_from_db()
+        self.assertEqual(before, {name: getattr(song, name) for name in fields})
+
+    def test_new_audio_publish_keeps_source_and_license_empty(self):
+        form = self.upload_form(source_name="", source_url="", license_name="", license_url="")
+        self.assertTrue(form.is_valid(), form.errors)
+        song = form.save(commit=False)
+        with patch("music.admin.store_audio", return_value="songs/synthetic-new.wav"):
+            self.admin.save_model(self.request, song, form, False)
+        song.refresh_from_db()
+        self.assertTrue(song.active)
+        self.assertTrue(song.playback_allowed)
+        for name in ("source_name", "source_url", "license_name", "license_url", "attribution_text"):
+            self.assertEqual(getattr(song, name), "")
+        self.assertFalse(song.redistribution_allowed)
+
+    def test_existing_mp3_publishes_without_source_inputs_after_preview(self):
+        song = Song.objects.get(pk=self.song.pk)
+        song.active, song.playback_allowed, song.checked_at = False, False, None
+        song.source_name = "LOCAL_DRAFT_SHA256:" + "a" * 64
+        song.source_url = song.license_name = song.license_url = ""
+        song.file_path, song.mime = "songs/synthetic.mp3", "audio/mpeg"
+        song.save()
+        data = self.form_data(mime="audio/mpeg", preview_confirmed=True)
+        with patch("pathlib.Path.is_file", return_value=True), patch("pathlib.Path.open", side_effect=lambda *args, **kwargs: io.BytesIO(b"\xff\xfb\x90\x00")):
+            form = SongAdminForm(data=data, instance=song)
+            self.assertTrue(form.is_valid(), form.errors)
+            form.save()
+        song.refresh_from_db()
+        self.assertTrue(song.active)
+        self.assertTrue(song.playback_allowed)
+        self.assertIsNotNone(song.checked_at)
+        self.assertEqual(song.source_name, "LOCAL_DRAFT_SHA256:" + "a" * 64)
+        self.assertEqual(song.license_url, "")
 
     def test_staff_without_model_permission_cannot_preview_or_upload(self):
         User.objects.filter(id=self.user.id).update(is_staff=True)

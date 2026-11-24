@@ -10,6 +10,7 @@ function fixture(options = {}) {
   const events = [], delays = [], notices = [], revoked = []
   const audio = { src: '', currentTime: 0, duration: 100, paused: true, seeking: false, async play() { if (options.rejectPlay) throw Error('blocked'); this.paused = false }, pause() { this.paused = true }, load() { this.currentTime = 0 } }
   const controller = new PlaybackController(audio, { now: () => clock, uuid: () => 'uuid-' + ++serial, send: async event => { events.push(event); if (options.send) await options.send(event, events.length) }, delay: async ms => { delays.push(ms); if (options.delay) await options.delay(ms) }, createUrl: () => 'blob:local', revokeUrl: url => revoked.push(url), notify: text => notices.push(text), changed: () => {} })
+  if (!options.defaultMode) controller.setMode('order')
   return { controller, audio, events, delays, notices, revoked, advance(ms) { clock += ms } }
 }
 test('PLAY follows playing only, once across pause/resume', async () => {
@@ -113,4 +114,86 @@ test('navigation cancels a pending local selection after online termination', as
   await state.controller.playSong(song); state.controller.playing()
   const selection = state.controller.selectLocal({ name: 'local.wav' }); state.controller.leaveLocal(); accept(); await selection
   assert.equal(state.controller.localUrl, ''); assert.notEqual(state.audio.src, 'blob:local')
+})
+
+const second = { ...song, id: 2, title: 'Second', stream_url: '/api/v1/songs/2/stream/' }
+test('list mode is default and wraps the current queue while keeping behavior sessions separate', async () => {
+  const state = fixture({ defaultMode: true })
+  assert.equal(state.controller.mode, 'list')
+  await state.controller.playQueue([song, second], 1)
+  state.controller.playing(); state.advance(100000); state.audio.currentTime = 100
+  await state.controller.ended()
+  assert.equal(state.audio.src, song.stream_url)
+  state.controller.playing()
+  assert.deepEqual(state.events.map(event => event.kind), ['PLAY', 'COMPLETE', 'PLAY'])
+  assert.notEqual(state.events[0].listening_session_id, state.events[2].listening_session_id)
+})
+test('single mode repeats current song but manual next still switches', async () => {
+  const state = fixture(); state.controller.setMode('single')
+  await state.controller.playQueue([song, second], 0)
+  const original = state.controller.session.id
+  await state.controller.ended()
+  assert.equal(state.controller.session.song.id, song.id)
+  assert.notEqual(state.controller.session.id, original)
+  await state.controller.skip(1)
+  assert.equal(state.controller.session.song.id, second.id)
+})
+test('order advances once and stops at queue end', async () => {
+  const state = fixture(); await state.controller.playQueue([song, second], 0)
+  await state.controller.ended()
+  assert.equal(state.controller.session.song.id, second.id)
+  await state.controller.ended()
+  const finalSession = state.controller.session
+  await state.controller.ended(); await state.controller.skip(1)
+  assert.equal(state.controller.session, finalSession)
+  assert.equal(finalSession.terminal, true)
+})
+test('random never immediately repeats in a multi-song queue and handles a singleton', async () => {
+  const state = fixture(); state.controller.setMode('random')
+  await state.controller.playQueue([song, second], 0)
+  for (let count = 0; count < 8; count++) {
+    const previous = state.controller.session.song.id
+    await state.controller.ended()
+    assert.notEqual(state.controller.session.song.id, previous)
+  }
+  await state.controller.playQueue([song], 0); await state.controller.ended()
+  assert.equal(state.controller.session.song.id, song.id)
+})
+test('queue is copied, deduplicated and filters invalid songs; routing retains it', async () => {
+  const state = fixture()
+  const songs = [song, song, { ...second, playable: false }, second]
+  await state.controller.playQueue(songs, 0); songs.splice(0)
+  assert.deepEqual(state.controller.queue.map(item => item.id), [1, 2])
+  state.controller.leaveLocal()
+  assert.equal(state.controller.queue.length, 2)
+  await state.controller.skip(-1)
+  assert.equal(state.controller.session.song.id, 1)
+  await state.controller.skip(1)
+  assert.equal(state.controller.session.song.id, 2)
+  await state.controller.stop()
+  assert.equal(state.controller.queue.length, 0)
+})
+test('logout during ended behavior submission cannot advance stale queue', async () => {
+  let accept
+  const state = fixture({ send: event => event.kind === 'PLAY' ? new Promise(resolve => { accept = resolve }) : undefined })
+  await state.controller.playQueue([song, second], 0); state.controller.playing()
+  const ending = state.controller.ended()
+  state.controller.cancelOnline(); accept(); await ending
+  assert.equal(state.audio.src, '')
+  assert.equal(state.controller.queue.length, 0)
+})
+test('duplicate concurrent ended events only advance one song', async () => {
+  const state = fixture(); await state.controller.playQueue([song, second], 0)
+  await Promise.all([state.controller.ended(), state.controller.ended()])
+  assert.equal(state.controller.session.song.id, second.id)
+  assert.equal(state.controller.session.terminal, false)
+})
+test('local loop reuses object URL without online events and never resumes old queue', async () => {
+  const state = fixture({ defaultMode: true }); await state.controller.playQueue([song, second], 0)
+  await state.controller.selectLocal({ name: 'private.wav' })
+  state.audio.currentTime = 100; await state.controller.ended()
+  assert.equal(state.audio.currentTime, 0)
+  assert.equal(state.audio.src, 'blob:local')
+  assert.equal(state.controller.queue.length, 0)
+  assert.equal(state.events.length, 0)
 })

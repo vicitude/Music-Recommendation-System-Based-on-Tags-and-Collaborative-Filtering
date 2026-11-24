@@ -1,4 +1,4 @@
-import json
+﻿import json
 import re
 from pathlib import Path
 
@@ -7,27 +7,28 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 
 from music.models import Song, SongTag, Tag, User
+from music.tag_library import canonical_tag
 
 
 def suggest_tags(filename):
     candidates = {
-        "A-Lin-天若有情": ("流行", "伤感", "夜晚"),
-        "Capper&罗言RollFlash-雪 Distance": ("说唱", None, "通勤"),
-        "DJ Dark&Mentol-Mood(Radio Edit)": ("电子", "动感", "运动"),
-        "G.E.M.邓紫棋-句号": ("流行", "释然", "通勤"),
-        "HITA-赤伶": ("国风", "悲壮", None),
-        "Kirsty刘瑾睿-若把你(Live)": ("流行", "温柔", "放松"),
-        "Lana Del Rey-Young And Beautiful": ("流行", "忧郁", "夜晚"),
-        "Taylor Swift-Love Story": ("乡村流行", "浪漫", "通勤"),
-        "草东没有派对-山海": ("摇滚", "激昂", None),
+        "A-Lin-天若有情": ("流行", "悲伤", "夜晚"),
+        "Capper&罗言RollFlash-雪 Distance": ("嘻哈说唱", None, "驾车"),
+        "DJ Dark&Mentol-Mood(Radio Edit)": ("电子", "活力", "运动"),
+        "G.E.M.邓紫棋-句号": ("流行", "放松", "夜晚"),
+        "HITA-赤伶": ("国风", "悲伤", None),
+        "Kirsty刘瑾睿-若把你(Live)": ("流行", "放松", "放松"),
+        "Lana Del Rey-Young And Beautiful": ("流行", "抑郁", "夜晚"),
+        "Taylor Swift-Love Story": ("乡村", "浪漫", "驾车"),
+        "草东没有派对-山海": ("摇滚", "热血励志", None),
         "陈粒-虚拟": ("流行", None, None),
-        "凤凰传奇-奢香夫人": ("民族流行", "动感", "运动"),
-        "告五人-爱人错过": ("流行摇滚", None, "通勤"),
-        "告五人-唯一": ("流行", "伤感", "夜晚"),
-        "葛东琪-悬溺": ("流行", "忧郁", "夜晚"),
+        "凤凰传奇-奢香夫人": ("民族歌曲", "活力", "运动"),
+        "告五人-爱人错过": ("流行", None, "驾车"),
+        "告五人-唯一": ("流行", "悲伤", "夜晚"),
+        "葛东琪-悬溺": ("流行", "抑郁", "夜晚"),
         "葛东琪-悬溺(伴奏)": ("流行", None, None),
-        "郭顶-凄美地": ("流行摇滚", "忧郁", "夜晚"),
-        "萧亚轩-遗失的心跳": ("流行", "伤感", "通勤"),
+        "郭顶-凄美地": ("流行", "抑郁", "夜晚"),
+        "萧亚轩-遗失的心跳": ("流行", "悲伤", "驾车"),
         "李玉刚&国风新语-赤伶(2021交响乐版)": ("国风", None, None),
     }
     stem = Path(filename).stem
@@ -35,10 +36,13 @@ def suggest_tags(filename):
     for kind, name in zip(("STYLE", "MOOD", "SCENE"), candidates.get(stem, ())):
         if name:
             result.append({"kind": kind, "name": name, "confidence": "LOW" if kind == "SCENE" else "MEDIUM", "basis": "歌曲身份常识候选，未对当前文件试听；场景为使用建议", "needs_review": True})
-    for word, label in (("钢琴版", "钢琴"), ("Orchestral", "管弦乐"), ("纯音乐", "纯音乐"), ("伴奏", "伴奏"), ("交响乐版", "管弦乐"), ("Remix", "混音版")):
+    for word, label in (("钢琴版", "轻音乐"), ("Orchestral", "古典"), ("纯音乐", "轻音乐"), ("伴奏", "轻音乐"), ("交响乐版", "古典"), ("Remix", "电子")):
         if word.casefold() in stem.casefold() and not any(item["name"] == label for item in result):
             result.append({"kind": "STYLE", "name": label, "confidence": "LOW", "basis": f"文件名版本词：{word}，未声学验证", "needs_review": True})
-    return result
+    for item in result:
+        item["kind"], item["name"] = canonical_tag(item["kind"], item["name"])
+    unique = {(item["kind"], item["name"]): item for item in result}
+    return list(unique.values())
 
 
 def normalize_metadata(filename, properties):
@@ -92,6 +96,7 @@ def validate_catalog(document):
         for tag in tags:
             if not isinstance(tag, dict) or tag.get("kind") not in {"STYLE", "MOOD", "SCENE"} or not isinstance(tag.get("name"), str) or not 1 <= len(tag["name"].strip()) <= 30 or tag.get("confidence") not in {"LOW", "MEDIUM"} or tag.get("needs_review") is not True or not isinstance(tag.get("basis"), str):
                 raise ValidationError("候选标签字段无效")
+            tag["kind"], tag["name"] = canonical_tag(tag["kind"], tag["name"].strip())
         item["eligible"] = bool(item["title"].strip() and item["artist"].strip() and duration)
     return document["items"]
 
@@ -129,3 +134,4 @@ def import_drafts(*, items, selected_hashes, owner_id, accept_tags=False):
                 SongTag.objects.get_or_create(song=song, tag=tag)
         created += 1
     return {"created": created, "skipped": skipped}
+

@@ -1,0 +1,49 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'music/batch-import.css' %}?v=20261110-2">{% endblock %}
+{% block extrahead %}{{ block.super }}<script src="{% static 'music/batch-import.js' %}?v=20261109-2" defer></script>{% endblock %}
+{% block content %}
+<div class="batch-workspace">
+<p><a class="button" href="{% url 'admin:music_song_published' %}">查看已发布歌曲 →</a></p>
+<details><summary>找回最近批次（重启不会清除已保存结果）</summary>{% for recent in recent_batches %}<p><a href="?batch_id={{ recent.batch_id }}">{{ recent.created_at }} · 已生成标签 {{ recent.analyzed }} 首</a></p>{% empty %}<p>当前账号暂无可恢复批次。</p>{% endfor %}</details>
+<p><a class="button" href="{% url 'admin:music_song_batch_publish' %}">批量发布歌曲 →</a> 保存新歌草稿后，在此勾选并发布到前台。</p>
+<div class="batch-header"><div><h2>① 扫描素材 → ② 选歌打标签 → ③ 确认保存</h2><p class="batch-muted">默认目录 D:\AAA素材库\song · MP3 / WAV / OGG · 每首最多30MiB · 每批最多500首；不修改源文件。</p></div>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="scan"><button type="submit" class="button" data-other-action>扫描本地素材目录</button></form></div>
+{% if error %}<p class="errornote" role="alert">{{ error }}</p>{% endif %}
+{% if batch %}
+<p>发现 <strong>{{ batch.summary.scanned }}</strong> 个文件 · 资料完整可导入 {{ batch.summary.eligible }} 首 · 批内重复 {{ batch.summary.duplicates }} 首 · 异常或跳过 {{ batch.summary.rejected }} 首。</p>
+<p class="batch-muted">批次 {{ batch.batch_id }}。缺歌手的歌曲可先分析，补齐资料后才能导入；损坏/不支持的文件不可选择。已有歌曲只预览候选，不覆盖曲库。</p>
+{% if batch.truncated %}<p class="errornote">超过500首上限，本批未覆盖整个目录，请分目录处理。</p>{% endif %}
+{% if editor and can_apply_tags %}<section class="batch-candidate-editor" id="candidate-editor">
+<h2>修改候选标签：{{ editor.title|default:editor.filename }}</h2>
+<p>每类至少1项，直接勾选即可；保存后再导入。仅调整本批候选，不覆盖已有曲库，原模型证据保留。</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="save_candidate_edit"><input type="hidden" name="batch_id" value="{{ batch.batch_id }}"><input type="hidden" name="fingerprint" value="{{ editor.sha256 }}">
+<div class="batch-editor-groups">{% for group in tag_groups %}<fieldset><legend>{{ group.label }}（1—{{ group.limit }}项）</legend><div class="batch-editor-options">{% for option in group.options %}<label><input type="checkbox" name="tag_ids" value="{{ option.id }}"{% if option.selected %} checked{% endif %}> {{ option.name }}</label>{% empty %}<p>暂无启用标签，请先到标签词库补充。</p>{% endfor %}</div></fieldset>{% endfor %}</div>
+<button type="submit" class="button" data-other-action>保存候选标签修改</button> <a href="?batch_id={{ batch.batch_id }}">取消 / 返回批次</a>
+</form></section>{% endif %}
+<form method="post" data-analysis-form>{% csrf_token %}<input type="hidden" name="action" value="minimum_analyze"><input type="hidden" name="batch_id" value="{{ batch.batch_id }}">
+<div class="batch-toolbar"><label><input type="checkbox" data-select-all> 全选可分析歌曲</label><button type="button" data-clear>取消选择</button><strong data-selection-count>已选0首</strong><button type="submit" class="button" data-start>给选中歌曲打标签</button><button type="button" data-stop hidden>停止后续处理</button></div>
+<p class="batch-muted">一次选择任意数量，系统自动分组处理，无需每5首手动操作。请保持页面打开；关闭后不继续处理。成功时曲风1—2项、情绪1—3项、场景1—2项；★低把握补位，场景仅为使用建议，分数不是概率。</p>
+<noscript><p class="errornote">当前浏览器未启用脚本，只能每次勾选1至5首提交分析。</p></noscript>
+<progress value="0" max="1" hidden></progress><p data-progress-status role="status" aria-live="polite">选择歌曲后点击打标签，结果将直接显示在表格中；尚不写入曲库。</p>
+<div class="batch-table-wrap"><table class="batch-table"><thead><tr><th>选择</th><th>歌曲 / 文件</th><th>状态</th><th>曲风</th><th>情绪</th><th>场景建议</th></tr></thead><tbody>
+{% for item in batch.items %}<tr><td>{% if item.status == "READY" or item.status == "NEEDS_METADATA" %}<input type="checkbox" name="model_selected" value="{{ item.sha256 }}" aria-label="选择 {{ item.filename }}">{% else %}—{% endif %}</td><td><strong>{{ item.title|default:item.filename }}</strong><br>{{ item.artist|default:"歌手待补" }}<br><span class="batch-muted">{{ item.relative_path }}</span></td><td><span data-row-status>{% if item.minimum_analysis.status == "CANDIDATES" %}标签已生成（尚未入库）{% elif item.minimum_analysis %}{{ item.minimum_analysis.status }} {{ item.minimum_analysis.reasons|join:"；" }}{% else %}{{ item.status }} {{ item.metadata_issues|join:"；" }}{% endif %}</span>{% if item.candidate_edit %}<br><strong>人工已调整</strong>{% endif %}{% if item.candidate_edit_error %}<p class="errornote">{{ item.candidate_edit_error }}</p>{% endif %}{% if can_apply_tags %}<br><a href="?batch_id={{ batch.batch_id }}&amp;edit={{ item.sha256 }}#candidate-editor" data-edit-candidates>修改候选标签</a>{% endif %}</td><td data-kind="STYLE">{% for tag in item.effective_candidates %}{% if tag.kind == "STYLE" %}<span class="batch-tag">{{ tag.name }}{% if tag.evidence_level == "LOW_FALLBACK" %} ★低把握补位{% endif %}</span>{% endif %}{% endfor %}</td><td data-kind="MOOD">{% for tag in item.effective_candidates %}{% if tag.kind == "MOOD" %}<span class="batch-tag">{{ tag.name }}{% if tag.evidence_level == "LOW_FALLBACK" %} ★低把握补位{% endif %}</span>{% endif %}{% endfor %}</td><td data-kind="SCENE">{% for tag in item.effective_candidates %}{% if tag.kind == "SCENE" %}<span class="batch-tag">{{ tag.name }}（使用建议）{% if tag.evidence_level == "LOW_FALLBACK" %} ★低把握补位{% endif %}</span>{% endif %}{% endfor %}</td></tr>{% endfor %}
+{% for item in batch.skipped %}<tr><td>—</td><td>{{ item.relative_path }}</td><td colspan="4">{{ item.reason }}</td></tr>{% endfor %}
+</tbody></table></div></form>
+<div class="batch-save"><h2>③ 一键导入并发布</h2><p class="batch-muted">不用先保存草稿或跳转页面。采用本批标签候选，将资料完整的新歌直接导入并发布；已有歌曲不覆盖。失败项单独显示原因。</p>
+{% if can_apply_tags %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="import_publish"><input type="hidden" name="batch_id" value="{{ batch.batch_id }}"><p><label><input type="checkbox" name="confirm_import" value="yes" required> 确认采用本批模型标签（含低把握补位与场景建议），导入并发布新歌曲</label></p><button type="submit" class="button" data-other-action>一键导入并发布新歌</button></form>{% endif %}
+<p><a class="button" href="{% url 'admin:music_song_batch_publish' %}">已有草稿：前往批量发布 →</a></p>
+<details><summary>只保存草稿，暂不发布（可选）</summary>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="import"><input type="hidden" name="batch_id" value="{{ batch.batch_id }}">
+<label><input type="checkbox" name="confirm_import" value="yes" required> 确认创建草稿并复制音频，不发布、重复项不覆盖</label>
+{% if can_apply_tags %}<label><input type="checkbox" name="accept_model_tags" value="yes"> 确认采用多标签候选（包含低把握补位及场景建议）</label>
+<details><summary>兼容旧规则（勿与多标签同时使用）</summary><label><input type="checkbox" name="accept_high_tags" value="yes"> 仅采用旧规则高分标签，不保证三类齐全</label></details>{% endif %}
+<button type="submit" class="button" data-other-action>保存新歌草稿 / 重试失败项</button></form></details></div>
+<details><summary>历史分析记录（兼容旧批次）</summary>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="model_analyze"><input type="hidden" name="batch_id" value="{{ batch.batch_id }}">{% for item in batch.items %}{% if item.status == "READY" or item.status == "NEEDS_METADATA" %}<label><input type="checkbox" name="model_selected" value="{{ item.sha256 }}">{{ item.filename }}</label>{% endif %}{% endfor %}<button type="submit" data-other-action>分析所选歌曲（仅生成候选）</button></form>
+{% for item in batch.items %}{% if item.model_analysis %}<p>{{ item.filename }} · {{ item.model_analysis.status }} · {{ item.model_analysis.reasons|join:"；" }}；证据不足时不写标签</p>{% endif %}{% if item.tag_analysis %}<p>{{ item.filename }} · {{ item.tag_analysis.status }}{% for tag in item.tag_suggestions %} · {{ tag.name }}{% endfor %}</p>{% endif %}{% endfor %}</details>
+{% if batch.result_summary %}<p>导入结果：已创建 {{ batch.result_summary.created }} 首，跳过 {{ batch.result_summary.skipped }} 首，失败 {{ batch.result_summary.failed }} 首。</p>{% endif %}
+{% if batch.results %}<details><summary>查看逐首保存结果</summary><table><thead><tr><th>文件</th><th>结果</th><th>说明</th></tr></thead><tbody>{% for entry in batch.results %}<tr><td>{{ entry.relative_path }}</td><td>{{ entry.status }}</td><td>{{ entry.message }}{% if entry.song_id %} <a href="{% url 'admin:music_song_change' entry.song_id %}">查看歌曲 / 修改标签</a>{% endif %}{% if entry.unassociated_media %} 存在未关联副本，请核对私有批次记录。{% endif %}</td></tr>{% endfor %}</tbody></table></details>{% endif %}
+{% else %}<p>先扫描文件夹，歌曲会显示在同一张表中，再逐首勾选或全选打标签。</p>{% endif %}
+</div>
+{% endblock %}

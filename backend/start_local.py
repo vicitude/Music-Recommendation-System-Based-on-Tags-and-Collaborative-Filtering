@@ -5,10 +5,23 @@ import secrets
 import socket
 import sys
 import warnings
+from pathlib import Path
 
 
 class StartupError(Exception):
     pass
+
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_PASSWORD_FILE = PROJECT_ROOT / "数据库密码.txt"
+DEFAULT_SECRET_FILE = PROJECT_ROOT / ".django-secret-key"
+
+
+def local_audio_environment(environment):
+    if environment.get("LOCAL_IMPORT_FFMPEG"):
+        return {}
+    executable = Path("D:/ffmpeg/ffmpeg.exe")
+    return {"LOCAL_IMPORT_FFMPEG": str(executable)} if executable.is_file() else {}
 
 
 def validate_environment(environment):
@@ -27,6 +40,15 @@ def validate_environment(environment):
 
 def obtain_password(environment, interactive):
     password = environment.get("MYSQL_PASSWORD", "")
+    password_file = Path(environment.get("MYSQL_PASSWORD_FILE", str(DEFAULT_PASSWORD_FILE))).expanduser()
+    if not password and password_file.is_file():
+        try:
+            lines = password_file.read_text(encoding="utf-8-sig").splitlines()
+        except (OSError, UnicodeError) as error:
+            raise StartupError("数据库密码文件无法读取，已停止；请检查本机文件编码和权限") from error
+        if len(lines) != 1:
+            raise StartupError("数据库密码文件只能包含一行密码，已停止")
+        password = lines[0].strip()
     if not password:
         if not interactive:
             raise StartupError("缺少专用数据库密码。请在本机交互终端运行本入口，隐藏输入密码；不要发送到聊天")
@@ -39,6 +61,33 @@ def obtain_password(environment, interactive):
     if not password or password == "change-me":
         raise StartupError("数据库密码为空或仍为示例值，未尝试连接")
     return password
+
+
+def obtain_secret_key(environment):
+    value = environment.get("DJANGO_SECRET_KEY", "")
+    secret_file = Path(environment.get("DJANGO_SECRET_KEY_FILE", str(DEFAULT_SECRET_FILE))).expanduser()
+    if value:
+        return value
+    if secret_file.is_file():
+        try:
+            value = secret_file.read_text(encoding="utf-8").strip()
+        except (OSError, UnicodeError) as error:
+            raise StartupError("Django会话密钥文件无法读取，已停止") from error
+        if value:
+            return value
+    value = secrets.token_urlsafe(50)
+    temporary = secret_file.with_name("temp_" + secret_file.name)
+    try:
+        secret_file.parent.mkdir(parents=True, exist_ok=True)
+        temporary.write_text(value + "\n", encoding="utf-8", newline="\n")
+        os.replace(temporary, secret_file)
+    except OSError as error:
+        try:
+            temporary.unlink(missing_ok=True)
+        except OSError:
+            pass
+        raise StartupError("无法保存本机Django会话密钥文件，已停止") from error
+    return value
 
 
 def inspect_database(connection, expected_tables):
@@ -108,10 +157,10 @@ def main(argv=None):
         expected = validate_environment(os.environ)
         interactive = sys.stdin.isatty()
         password = obtain_password(os.environ, interactive)
-        values = {**expected, "MYSQL_PASSWORD": password, "DJANGO_ALLOWED_HOSTS": "127.0.0.1,localhost"}
+        values = {**expected, **local_audio_environment(os.environ), "MYSQL_PASSWORD": password, "DJANGO_ALLOWED_HOSTS": "127.0.0.1,localhost"}
         if not os.environ.get("DJANGO_SECRET_KEY"):
-            values["DJANGO_SECRET_KEY"] = secrets.token_urlsafe(50)
-            print("使用本进程随机会话密钥，重启后可能需要重新登录")
+            values["DJANGO_SECRET_KEY"] = obtain_secret_key(os.environ)
+            print("已加载本机持久化会话密钥，重启后保留管理员登录状态")
         for name, value in values.items():
             original[name] = os.environ.get(name)
             os.environ[name] = value

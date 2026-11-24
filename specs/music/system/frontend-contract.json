@@ -47,7 +47,10 @@
         "getSong",
         "streamSong",
         "addFavorite",
-        "removeFavorite"
+        "removeFavorite",
+        "getRating",
+        "setRating",
+        "removeRating"
       ]
     },
     {
@@ -87,6 +90,38 @@
       "operations": [
         "getDaily",
         "refreshDaily"
+      ]
+    },
+    {
+      "path": "/users/:id",
+      "component": "frontend/src/pages/UserPage.vue",
+      "auth": "SESSION",
+      "operations": [
+        "getUser",
+        "followUser",
+        "unfollowUser"
+      ]
+    },
+    {
+      "path": "/users/:id/following",
+      "component": "frontend/src/pages/UserConnectionsPage.vue",
+      "auth": "SESSION",
+      "operations": [
+        "getUser",
+        "listFollowing",
+        "followUser",
+        "unfollowUser"
+      ]
+    },
+    {
+      "path": "/users/:id/followers",
+      "component": "frontend/src/pages/UserConnectionsPage.vue",
+      "auth": "SESSION",
+      "operations": [
+        "getUser",
+        "listFollowers",
+        "followUser",
+        "unfollowUser"
       ]
     }
   ],

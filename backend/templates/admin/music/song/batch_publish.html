@@ -1,0 +1,19 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<p>选择未发布歌曲，一次发布到前台。系统逐首检查资料、音频和标签；不合格项保持原状，不影响其他歌曲。不重新打标签，不覆盖已有标签。</p>
+<p><a href="{% url 'admin:music_song_changelist' %}">返回歌曲列表</a> · <a href="{% url 'admin:music_song_published' %}">查看已发布歌曲</a> · <a href="{% url 'admin:music_song_batch_import' %}">扫描与导入音乐</a></p>
+{% if error %}<p class="errornote" role="alert">{{ error }}</p>{% endif %}
+{% if results %}<h2>本次发布结果</h2><table><thead><tr><th>歌曲</th><th>结果</th></tr></thead><tbody>{% for entry in results %}<tr><td>{{ entry.title }}</td><td>{{ entry.message }}</td></tr>{% endfor %}</tbody></table>{% endif %}
+<h2>待发布歌曲（{{ songs|length }} 首）</h2>
+{% if songs %}<form method="post">{% csrf_token %}
+<p><button type="button" id="select-drafts">全选</button> <button type="button" id="clear-drafts">取消全选</button></p>
+<div style="max-height:55vh;overflow:auto"><table style="width:100%"><thead><tr><th>选择</th><th>歌曲</th><th>歌手</th><th>编辑</th></tr></thead><tbody>{% for song in songs %}<tr><td><input type="checkbox" name="selected" value="{{ song.pk }}" aria-label="选择 {{ song.title }}"></td><td>{{ song.title }}</td><td>{{ song.artist }}</td><td><a href="{% url 'admin:music_song_change' song.pk %}">修改资料 / 标签</a></td></tr>{% endfor %}</tbody></table></div>
+<p><label><input type="checkbox" name="confirm_publish" value="yes" required> 确认将选中的合格歌曲发布到前台</label></p>
+<button type="submit" class="default">发布选中歌曲</button>
+</form>
+<script>
+document.getElementById('select-drafts').addEventListener('click', () => document.querySelectorAll('[name="selected"]').forEach(choice => { choice.checked = true; }));
+document.getElementById('clear-drafts').addEventListener('click', () => document.querySelectorAll('[name="selected"]').forEach(choice => { choice.checked = false; }));
+</script>
+{% else %}<p>目前没有已入库且未发布的歌曲。这不表示批次标签丢失：仅完成打标签的结果还在导入批次中，已有歌曲也可能已全部发布。</p><p><a href="{% url 'admin:music_song_batch_import' %}">返回导入页面，找回最近批次 / 一键导入并发布新歌 →</a></p>{% endif %}
+{% endblock %}

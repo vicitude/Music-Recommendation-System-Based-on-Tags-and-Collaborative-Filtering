@@ -11,6 +11,23 @@ class User(AbstractUser):
         db_table = "music_user"
 
 
+class Follow(models.Model):
+    source = models.ForeignKey(User, on_delete=models.CASCADE, related_name="outgoing_follows")
+    target = models.ForeignKey(User, on_delete=models.CASCADE, related_name="incoming_follows")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "music_follow"
+        constraints = [
+            models.UniqueConstraint(fields=["source", "target"], name="uq_follow_source_target"),
+            models.CheckConstraint(condition=~models.Q(source=models.F("target")), name="ck_follow_not_self"),
+        ]
+        indexes = [
+            models.Index(fields=["source", "-created_at", "-id"], name="ix_follow_source_created_id"),
+            models.Index(fields=["target", "-created_at", "-id"], name="ix_follow_target_created_id"),
+        ]
+
+
 class Tag(models.Model):
     STYLE = "STYLE"
     MOOD = "MOOD"
@@ -19,6 +36,10 @@ class Tag(models.Model):
     name = models.CharField(max_length=30)
     kind = models.CharField(max_length=5, choices=KIND_CHOICES)
     active = models.BooleanField(default=True)
+
+    def __str__(self):
+        suffix = "" if self.active else "（已停用）"
+        return f"{self.get_kind_display()}｜{self.name}{suffix}"
 
     class Meta:
         db_table = "music_tag"
@@ -52,6 +73,9 @@ class SongTag(models.Model):
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     weight = models.PositiveSmallIntegerField(default=1)
 
+    def __str__(self):
+        return str(self.tag) if self.tag_id else "未选择标签"
+
     class Meta:
         db_table = "music_song_tag"
         constraints = [models.UniqueConstraint(fields=["song", "tag"], name="uq_song_tag")]
@@ -74,6 +98,36 @@ class Favorite(models.Model):
     class Meta:
         db_table = "music_favorite"
         constraints = [models.UniqueConstraint(fields=["user", "song"], name="uq_favorite")]
+
+
+class Rating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+    score = models.PositiveSmallIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "music_rating"
+        constraints = [
+            models.UniqueConstraint(fields=["user", "song"], name="uq_rating_user_song"),
+            models.CheckConstraint(condition=models.Q(score__gte=1, score__lte=5), name="ck_rating_score_1_5"),
+        ]
+        indexes = [models.Index(fields=["song", "score"], name="ix_rating_song_score")]
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name="作者")
+    song = models.ForeignKey(Song, on_delete=models.PROTECT, verbose_name="歌曲")
+    content = models.CharField("评论内容", max_length=500)
+    created_at = models.DateTimeField("发表时间", auto_now_add=True)
+
+    class Meta:
+        db_table = "music_comment"
+        verbose_name = "歌曲评论"
+        verbose_name_plural = "歌曲评论"
+        ordering = ["-created_at", "-id"]
+        indexes = [models.Index(fields=["song", "-created_at", "-id"], name="ix_comment_song_created_id")]
 
 
 class Playlist(models.Model):
@@ -129,6 +183,10 @@ class RecommendationSnapshot(models.Model):
     alpha_target = models.FloatField()
     alpha_effective = models.FloatField(null=True, blank=True)
     items = models.JSONField(default=list)
+    route_weights = models.JSONField(default=dict)
+    scene_id = models.PositiveBigIntegerField(null=True, blank=True)
+    scene_source = models.CharField(max_length=4, blank=True, default="")
+    scene_match_rate = models.FloatField(default=0)
     generated_at = models.DateTimeField()
 
     class Meta:

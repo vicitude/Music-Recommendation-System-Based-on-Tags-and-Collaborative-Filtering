@@ -1,0 +1,12 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<div class="module">
+<h1>已发布歌曲</h1>
+<p>这里显示当前已经进入前台曲库的歌曲。判断标准是“已发布并允许播放”，不是批次分析数量。</p>
+<p><a href="{% url 'admin:music_song_batch_import' %}">扫描与导入音乐</a> · <a href="{% url 'admin:music_song_batch_publish' %}">批量发布草稿</a> · <a href="{% url 'admin:music_song_changelist' %}">歌曲管理</a></p>
+<h2>共 {{ songs|length }} 首已发布歌曲</h2>
+{% if songs %}<div style="max-height:65vh;overflow:auto"><table style="width:100%"><thead><tr><th>序号</th><th>歌曲</th><th>歌手</th><th>标签</th><th>播放状态</th><th>发布时间</th><th>操作</th></tr></thead><tbody>
+{% for song in songs %}<tr><td>{{ forloop.counter }}</td><td><strong>{{ song.title }}</strong></td><td>{{ song.artist }}</td><td>{% for relation in song.songtag_set.all %}<span style="display:inline-block;margin:2px 4px 2px 0">{{ relation.tag.name }}</span>{% empty %}—{% endfor %}</td><td>{% if song.playback_allowed %}可播放{% else %}已发布但播放关闭{% endif %}</td><td>{{ song.checked_at|date:"Y-m-d H:i"|default:"—" }}</td><td><a href="{% url 'admin:music_song_change' song.pk %}">查看 / 编辑</a></td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p>当前没有已发布歌曲。请先在导入页面完成分析，再使用“一键导入并发布新歌”。</p>{% endif %}
+</div>
+{% endblock %}

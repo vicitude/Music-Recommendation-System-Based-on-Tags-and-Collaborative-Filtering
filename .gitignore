@@ -9,5 +9,11 @@ __pycache__/
 media/
 logs/
 启动命令*.txt
+启动后端.ps1
 *密码*.txt
 *秘密*.txt
+.django-secret-key
+temp_.django-secret-key
+.agents/
+local-import-batches/
+local-ai/

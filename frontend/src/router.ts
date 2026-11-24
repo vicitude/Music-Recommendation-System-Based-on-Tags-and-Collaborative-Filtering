@@ -1,4 +1,4 @@
-export type RouteName = 'login' | 'register' | 'onboarding' | 'discover' | 'song' | 'favorites' | 'playlists' | 'playlist' | 'daily' | 'not-found'
+export type RouteName = 'login' | 'register' | 'onboarding' | 'discover' | 'song' | 'favorites' | 'playlists' | 'playlist' | 'daily' | 'evaluation' | 'profile' | 'user' | 'user-connections' | 'not-found'
 
 const routes: Record<string, RouteName> = {
   '/login': 'login',
@@ -8,6 +8,8 @@ const routes: Record<string, RouteName> = {
   '/favorites': 'favorites',
   '/playlists': 'playlists',
   '/daily': 'daily',
+  '/evaluation': 'evaluation',
+  '/profile': 'profile',
 }
 
 export function currentPath(): string {
@@ -17,6 +19,8 @@ export function currentPath(): string {
 export function routeName(): RouteName {
   const path = currentPath()
   if (routes[path]) return routes[path]
+  if (/^\/users\/\d+$/.test(path)) return 'user'
+  if (/^\/users\/\d+\/(following|followers)$/.test(path)) return 'user-connections'
   if (/^\/songs\/\d+$/.test(path)) return 'song'
   if (/^\/playlists\/\d+$/.test(path)) return 'playlist'
   return 'not-found'
